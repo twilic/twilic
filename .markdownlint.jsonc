@@ -15,5 +15,8 @@
   "MD040": true,
   "MD046": {
     "style": "fenced"
+  },
+  "MD024": {
+    "siblings_only": true
   }
 }
