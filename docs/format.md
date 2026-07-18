@@ -1,10 +1,10 @@
-# Format Guide (v2)
+# Format Guide (v3)
 
-This document describes the Twilic v2 wire layout in practical terms. It mirrors the normative rules in `SPEC.md`, but keeps the focus on byte structure and decode shape.
+This document describes the Twilic v3 wire layout in practical terms. It mirrors the normative rules in `SPEC.md`, but keeps the focus on byte structure and decode shape.
 
 ## 1. Wire Model Overview
 
-v2 uses a tag-table model. The first byte is always a tag family or fixed literal tag. Unlike v1, there is no top-level message-kind envelope byte.
+v3 uses profile-specific wire models. Dynamic Profile uses the compact tag-table model. Bound and Batch Profiles use message-kind envelopes when self-delimiting payloads are needed. `BOUND_STREAM` (`0x0F`) binds a schema for compact record streams, and `SCHEMA_BATCH` (`0x0E`) is the schema-aware columnar form.
 
 ### 1.1 First-byte compact families
 
@@ -71,7 +71,7 @@ Array may remain generic, or be promoted to:
 
 ## 3. Message-Local Reuse Forms
 
-v2 does not require session state for structural reuse in one message.
+Dynamic Profile does not require session state for structural reuse in one message.
 
 ### 3.1 `shape_def` (`0xD6`)
 
@@ -100,14 +100,40 @@ All intern tables (`key_id`, `str_id`, `shape_id`) reset at each top-level messa
 
 ## 4. Batch and Stateful Forms
 
-### 4.1 Batch
+### 4.1 Dynamic batch
 
 - `0xDB`: `row_batch`
 - `0xDC`: `col_batch`
 
-Both are valid v2 tags and optional to implement.
+Both remain optional Dynamic forms.
 
-### 4.2 Stateful
+### 4.2 Bound batch
+
+`SCHEMA_BATCH` (`0x0E`) is the schema-aware columnar batch form:
+
+```text
+0x0E [schema_id][count][column_count][columns...]
+```
+
+Each column carries schema field id, presence strategy, codec, and typed vector payload. Presence bitmaps and numeric vectors are bit-packed where the codec permits.
+
+### 4.3 Bound stream
+
+`BOUND_STREAM` (`0x0F`) is the schema-bound compact stream form:
+
+```text
+0x0F [schema_id?][count?][presence_strategy][record_body...]
+```
+
+If schema id and count are supplied by the transport or benchmark harness, they are external framing and are not part of raw record payload bytes. Each record body is decoded using schema order:
+
+```text
+[presence bits?][fixed bit group][variable payloads...]
+```
+
+Presence is bit-packed before the fixed bit group when optional fields can be absent. The fixed bit group packs bool, enum, and `range_bits` fields bit-contiguously. Variable payloads contain varints, strings, binary values, and other variable-length fields in schema order.
+
+### 4.4 Stateful
 
 - `0xDD`: `state_patch`
 - `0xDE`: `template_batch`
@@ -123,10 +149,13 @@ Typical encoder decisions:
 3. Replace repeats with `key_ref`/`str_ref`.
 4. Detect homogeneous map arrays and emit `shape_def` plus value rows.
 5. Promote homogeneous primitive arrays to `typed_vec`.
-6. Use stateful forms only when session guarantees exist.
+6. Use Bound bitstream fields when a shared schema is provided.
+7. Use `BOUND_STREAM` when repeated schema-bound records are compared against raw Avro or unframed Protocol Buffers streams.
+8. Use `schema_batch` for repeated records with the same schema when columnar gains are available.
+9. Use stateful forms only when session guarantees exist.
 
 ## 6. Compatibility and Versioning
 
-- v2 is a clean break from v1 wire framing.
-- v2 decoders are not required to decode v1 payloads.
-- Implementations supporting both versions should use an explicit external version discriminator.
+- v3 is a clean break from v2 for Bound Profile field payloads.
+- Dynamic Profile may remain v2-compatible where tags are unchanged.
+- Implementations supporting multiple versions should use an explicit external version discriminator.

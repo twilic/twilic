@@ -1,6 +1,6 @@
-# Transport Guide (v2)
+# Transport Guide (v3)
 
-This document describes transport and session behavior for Twilic v2.
+This document describes transport and session behavior for Twilic v3.
 
 ## 1. Stateless vs Stateful
 
@@ -19,7 +19,7 @@ Session state may include:
 - templates
 - optional dictionary metadata
 
-Per-message key/string/shape interning tables are message-local in v2 and are not persistent session state.
+Per-message key/string/shape interning tables are message-local in Dynamic Profile and are not persistent session state.
 
 Session state objects (`base_id`, `template_id`, dictionary ids) MUST NOT be reused across independent streams.
 
@@ -45,12 +45,14 @@ Typical usage:
 - short burst batches where full column mode is overkill
 - repeated optional-field presence patterns
 
-### 3.3 Batch forms (`0xDB` / `0xDC`)
+### 3.3 Bound and batch forms (`0x0F` / `0xDB` / `0xDC` / `0x0E`)
 
-Row and column batches remain available in session or stateless contexts.
+Bound streams, row batches, column batches, and schema-aware batches are available in session or stateless contexts.
 
+- `bound_stream` (`0x0F`) is suitable when one shared schema is bound once and consecutive records can omit per-record schema/object envelopes
 - `row_batch` is suitable for low-latency, moderate-size bursts
 - `col_batch` is suitable for larger batches and column codec gains
+- `schema_batch` (`0x0E`) is suitable when the same shared schema repeats and is the primary comparison point against Protobuf repeated records and Avro raw streams
 
 ## 4. Reset Behavior
 
@@ -85,8 +87,9 @@ Out-of-order delivery without reordering buffers can corrupt stateful decode exp
 
 ## 7. Versioning
 
-- v2 is a clean break from v1.
-- v1/v2 dual support requires explicit version signaling outside payload decode heuristics.
+- v3 is a clean break from v2 for Bound Profile field payloads.
+- Dynamic Profile may retain v2-compatible tags.
+- Dual support requires explicit profile and version signaling outside payload decode heuristics.
 
 ## 8. Operational Recommendations
 
@@ -94,4 +97,4 @@ Out-of-order delivery without reordering buffers can corrupt stateful decode exp
 - Log unknown reference failures with stream/session identifier.
 - Apply bounded state retention and eviction policies.
 - Monitor RESET_STATE frequency; frequent resets may indicate transport mismatch.
-- For mixed deployments, gate v2 rollout behind explicit version negotiation.
+- For mixed deployments, gate v3 rollout behind explicit version negotiation.
