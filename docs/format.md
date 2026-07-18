@@ -6,6 +6,10 @@ This document describes the Twilic v3 wire layout in practical terms. It mirrors
 
 v3 uses profile-specific wire models. Dynamic Profile uses the compact tag-table model. Bound and Batch Profiles use message-kind envelopes when self-delimiting payloads are needed. `BOUND_STREAM` (`0x0F`) binds a schema for compact record streams, and `SCHEMA_BATCH` (`0x0E`) is the schema-aware columnar form.
 
+A decoder MUST know the active profile before interpreting byte 0. Dynamic `row_batch`/`col_batch` use `0xDB`/`0xDC`; envelope `ROW_BATCH`/`COLUMN_BATCH` use `0x06`/`0x07`.
+
+In the v3 reference profile, Bound/Batch byte-0 values outside `0x00..0x0F` are reserved and fail decode unless negotiated.
+
 ### 1.1 First-byte compact families
 
 - `0x00..0x7F`: positive fixint (`0..127`)
@@ -81,6 +85,8 @@ Defines an ordered key sequence and registers `shape_id` in the current message.
 0xD6 [shape_id][key_count][key_0]...[key_n]
 ```
 
+`shape_def` is a declaration, not a decoded application value. In array bodies, declarations may appear before elements and do not count toward decoded array element count.
+
 ### 3.2 `shape_ref` (`0xD7`)
 
 References prior shape in the current message and encodes only values.
@@ -100,6 +106,18 @@ All intern tables (`key_id`, `str_id`, `shape_id`) reset at each top-level messa
 
 ## 4. Batch and Stateful Forms
 
+### 4.0 Bound object
+
+`SCHEMA_OBJECT` (`0x04`) is the independently decodable Bound object form when the resolved schema is known:
+
+```text
+0x04 [has_schema_id][schema_id?][has_presence][presence bytes?][field payloads...]
+```
+
+`has_schema_id` and `has_presence` are one-byte flags: `0x00 = false`, `0x01 = true`; other values fail decode. Field payloads are in schema order. Absent optional fields emit no payload. Variable-width fields are self-delimiting by length or varuint termination.
+
+Compact `SCHEMA_OBJECT` field payloads use `[fixed bit group][byte payloads...]` after presence bytes, following compact record-body bit order and padding rules.
+
 ### 4.1 Dynamic batch
 
 - `0xDB`: `row_batch`
@@ -112,10 +130,12 @@ Both remain optional Dynamic forms.
 `SCHEMA_BATCH` (`0x0E`) is the schema-aware columnar batch form:
 
 ```text
-0x0E [schema_id][count][column_count][columns...]
+0x0E [schema_id?][count][column_count?][columns...]
 ```
 
-Each column carries schema field id, presence strategy, codec, and typed vector payload. Presence bitmaps and numeric vectors are bit-packed where the codec permits.
+`schema_id` is omitted only when the enclosing context uniquely binds the schema. The profile predeclares whether `column_count` and `field_id` are present. Each column carries optional schema field id, null strategy, codec, and typed vector payload. `field_id` may be omitted in strict schema-order compact mode. `null_strategy` values are `0 = all present`, `1 = normal bitmap`, `2 = inverted bitmap`. Presence bitmaps use row order, least-significant-bit first, with zero padding. Nullable column payloads encode present values only.
+
+The v3 reference profile includes `column_count` and omits `field_id` in strict schema-order compact mode.
 
 ### 4.3 Bound stream
 
@@ -125,13 +145,17 @@ Each column carries schema field id, presence strategy, codec, and typed vector 
 0x0F [schema_id?][count?][presence_strategy][record_body...]
 ```
 
-If schema id and count are supplied by the transport or benchmark harness, they are external framing and are not part of raw record payload bytes. Each record body is decoded using schema order:
+The enclosing profile predeclares whether `schema_id` and `count` are present. If schema id and count are supplied by the transport or benchmark harness, they are external framing and are not part of raw record-body bytes. Each record body is decoded using schema order:
+
+The v3 reference profile includes `schema_id` and `count` unless an enclosing transport/profile explicitly declares external schema identity and framing.
+
+If `count` is omitted, external framing MUST supply record count, byte extent, or terminal end-of-stream. Multiplexed/framed transports MUST provide count or byte extent. `presence_strategy` values are `0 = normal bitmap per record`, `1 = inverted bitmap per record`, `2 = all-present elided`.
 
 ```text
-[presence bits?][fixed bit group][variable payloads...]
+[presence bits?][fixed bit group][byte payloads...]
 ```
 
-Presence is bit-packed before the fixed bit group when optional fields can be absent. The fixed bit group packs bool, enum, and `range_bits` fields bit-contiguously. Variable payloads contain varints, strings, binary values, and other variable-length fields in schema order.
+Presence is bit-packed before the fixed bit group when optional fields can be absent. Presence bits are least-significant-bit first in schema optional-field order and are zero-padded to a byte boundary. The fixed bit group packs bool, enum, and `range_bits` fields bit-contiguously, least-significant-bit first in schema order. Byte payloads contain `fixed_le`, float, varints, strings, binary values, and other byte-aligned fields in schema order. Non-zero padding bits fail decode.
 
 ### 4.4 Stateful
 
@@ -151,11 +175,11 @@ Typical encoder decisions:
 5. Promote homogeneous primitive arrays to `typed_vec`.
 6. Use Bound bitstream fields when a shared schema is provided.
 7. Use `BOUND_STREAM` when repeated schema-bound records are compared against raw Avro or unframed Protocol Buffers streams.
-8. Use `schema_batch` for repeated records with the same schema when columnar gains are available.
+8. Use `SCHEMA_BATCH` for repeated records with the same schema when columnar gains are available.
 9. Use stateful forms only when session guarantees exist.
 
 ## 6. Compatibility and Versioning
 
-- v3 is a clean break from v2 for Bound Profile field payloads.
+- v3 is a clean break from v2 for Bound Profile field/record-body payloads.
 - Dynamic Profile may remain v2-compatible where tags are unchanged.
-- Implementations supporting multiple versions should use an explicit external version discriminator.
+- Implementations supporting multiple profiles or versions MUST use an explicit external profile and version discriminator; payload auto-detection is not defined.

@@ -25,9 +25,9 @@ This repository is documentation-first. Changes should preserve consistency acro
 
 When changing one area, update the related materials in the same contribution.
 
-- Wire layout changes Update `SPEC.md`, `docs/format.md`, `docs/encoding.md`, `versions/v1.md`, and affected examples or diagrams.
-- Codec or scalar-rule changes Update `SPEC.md`, `docs/encoding.md`, `versions/v1.md`, and affected examples.
-- Stateful transport changes Update `SPEC.md`, `docs/transport.md`, `versions/v1.md`, and affected diagrams.
+- Wire layout changes Update `SPEC.md`, `docs/format.md`, `docs/encoding.md`, the active version file, and affected examples or diagrams.
+- Codec or scalar-rule changes Update `SPEC.md`, `docs/encoding.md`, the active version file, and affected examples.
+- Stateful transport changes Update `SPEC.md`, `docs/transport.md`, the active version file, and affected diagrams.
 - Repository navigation changes Update `README.md`, `CONTRIBUTING.md`, and any affected references in `SPEC.md`.
 
 ## Normative Writing Guidelines
@@ -79,6 +79,6 @@ After `pnpm install`, Husky runs Commitlint on each local commit. Pull requests 
 - Cross-references still point to the right document.
 - `README.md` still reflects the public repository layout.
 - Examples and diagrams still match the text.
-- The reference profile in `versions/v1.md` is still accurate.
+- The active reference profile in `versions/` is still accurate.
 
 By contributing to this repository, you agree that your contribution may be distributed under the `CC-BY-4.0` license used by the project.

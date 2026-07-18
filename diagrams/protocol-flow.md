@@ -7,9 +7,8 @@ sequenceDiagram
     participant C as Client Encoder
     participant S as Server Decoder
 
-    C->>S: Full message (MAP or SCHEMA_OBJECT)
-    C->>S: CONTROL REGISTER_KEYS / REGISTER_SHAPE
-    C->>S: Compact message (SHAPED_OBJECT or TYPED_VECTOR)
+    C->>S: Full message with message-local shape_def/key_ref/str_ref
+    C->>S: Compact dynamic forms inside message (shape_ref rows or TYPED_VECTOR)
     C->>S: BASE_SNAPSHOT (base_id=7)
     C->>S: STATE_PATCH (base_ref=7, KEEP/REPLACE...)
     C->>S: TEMPLATE_BATCH (template_id=3, count=6)
@@ -20,6 +19,7 @@ sequenceDiagram
 Operational intent:
 
 - Start with stateless messages for safe bootstrap.
-- Register keys/shapes/strings once repetition appears.
+- Use message-local key/shape/string references within a top-level message.
+- Persisted key/shape/string registration requires an explicitly negotiated stateful extension.
 - Use snapshot + patch + template only while state alignment is healthy.
 - Reset and resync immediately when unknown references or divergence is detected.

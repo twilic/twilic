@@ -6,7 +6,7 @@ This directory contains small JSON artifacts that map directly to Twilic specifi
 
 - `basic.json`
   - Dynamic-profile style object example.
-  - Useful for `MAP`/`SHAPED_OBJECT` discussion and key/shape interning behavior.
+  - Useful for `MAP`, `shape_def`/`shape_ref`, and key/shape interning behavior.
 - `schema-example.json`
   - Bound-profile style schema plus records example.
   - Demonstrates required/optional fields, enum-like strings, and bounded integers.

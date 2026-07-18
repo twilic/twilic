@@ -2,7 +2,7 @@
 
 This repository contains a documentation-first specification for a compact binary format for structured data.
 
-The format is intended to remain easy to use in schema-less workflows while becoming materially smaller than plain MessagePack when repeated structure, repeated strings, homogeneous arrays, batching, or session reuse is present.
+The format is intended to remain easy to use in schema-less workflows while targeting materially smaller output than plain MessagePack when repeated structure, repeated strings, homogeneous arrays, batching, or session reuse is present.
 
 ## Name
 
@@ -72,7 +72,7 @@ twilic/
 This repository includes profiles in `versions/`.
 
 - `versions/v2.md` records the previous interoperability profile.
-- `versions/v3.md` records the schema-aware compact profile for Bound bitstream fields, `BOUND_STREAM`, `SCHEMA_BATCH`, and fast-path requirements.
+- `versions/v3.md` records the schema-aware compact profile for Bound compact record-body bit groups, `BOUND_STREAM`, `SCHEMA_BATCH`, and fast-path requirements.
 
 ## License
 

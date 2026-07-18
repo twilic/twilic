@@ -8,11 +8,13 @@ flowchart TD
     B --> C[SCALAR]
     B --> D[MAP or ARRAY]
 
+    X[Shared schema<br/>single record] --> Y[SCHEMA_OBJECT]
+
     D --> E[Observe repetition<br/>keys / shape / type / value]
-    E --> F[CONTROL REGISTER_KEYS]
-    E --> G[CONTROL REGISTER_SHAPE]
+    E --> F[message-local<br/>key_ref / str_ref]
+    E --> G[message-local<br/>shape_def]
     E --> H[TYPED_VECTOR<br/>homogeneous arrays]
-    F --> I[SHAPED_OBJECT]
+    F --> I[compact dynamic refs]
     G --> I
 
     U[Shared schema<br/>record stream] --> V[BOUND_STREAM<br/>compact record bodies]
@@ -21,7 +23,7 @@ flowchart TD
     K --> L[ROW_BATCH]
     K --> M[COLUMN_BATCH]
     K --> M2[SCHEMA_BATCH]
-    M --> N[Per-column codecs<br/>delta / FOR / RLE / dictionary / XOR]
+    M --> N[Per-column codecs<br/>DELTA_* / FOR_BITPACK / RLE / DICTIONARY / XOR_FLOAT]
     M2 --> N
 
     O[Stateful session enabled] --> P[BASE_SNAPSHOT optional]
@@ -33,8 +35,9 @@ flowchart TD
 
 Notes:
 
-- `CONTROL` updates drive promotion to compact ids (`key_id`, `shape_id`, `string_id`).
+- Message-local `shape_def`, `key_ref`, and `str_ref` drive compact dynamic reuse without persistent session state.
+- Persistent CONTROL table updates require a separately negotiated stateful extension.
 - `BOUND_STREAM` is preferred when a schema is bound once and records can omit per-record envelopes.
 - `COLUMN_BATCH` becomes more effective as row count and column regularity increase.
-- `SCHEMA_BATCH` is the preferred form when every row shares a schema and is the primary compact batch for Protobuf/Avro comparisons.
+- `SCHEMA_BATCH` is the preferred columnar form when every row shares a schema; `BOUND_STREAM` is the row-wise raw stream form.
 - `STATE_PATCH` is beneficial only when sender and receiver state are synchronized.
