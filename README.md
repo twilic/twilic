@@ -77,4 +77,6 @@ Product and integration repositories are intentionally kept separate from the pr
 
 ## License
 
-This repository is distributed under `CC-BY-4.0`. See `LICENSE` for the full license text.
+The Twilic specification and documentation are licensed under `CC-BY-4.0`. See [`LICENSE`](LICENSE) for the full license text.
+
+The language runtime implementations and their tests under `runtimes/` are licensed separately under the MIT License. Each runtime directory includes its own [`LICENSE`](runtimes/rust/LICENSE) file.
