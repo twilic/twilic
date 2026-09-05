@@ -56,7 +56,6 @@ twilic/
 6. `examples/` and `diagrams/` for small concrete artifacts.
 7. `conformance/README.md` for shared fixture and CI conventions.
 8. `runtimes/<language>/README.md` for a language-specific API and development guide.
-9. `MIGRATION.md` for the imported runtime snapshots and repository transition policy.
 
 ## Reference Profiles
 
