@@ -1,0 +1,9 @@
+/node_modules/
+
+/coverage.out
+/coverage.html
+*.test
+*.out
+.DS_Store
+/scripts/rust-client-check/target/
+/scripts/rust-server-fixtures/target/

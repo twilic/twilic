@@ -1,0 +1,32 @@
+# Composer
+/vendor/
+composer.phar
+composer-setup.php
+
+# PHPUnit
+.phpunit.result.cache
+.phpunit.cache
+
+# Node (markdown tooling)
+/node_modules/
+
+# OS
+.DS_Store
+
+# Editor / tooling artifacts
+*.bak
+*.broken
+*.orig
+*.swp
+*~
+
+# Port / codegen scratch (keep scripts/, ignore one-off outputs in src)
+/src/Twilic/*.bak
+/src/Twilic/*.broken
+
+# Archived one-off port generators (optional to omit from clones)
+/scripts/port-archive/
+/scripts/__pycache__/
+
+# Rust interop / helper binaries (rebuilt locally)
+/scripts/**/target/

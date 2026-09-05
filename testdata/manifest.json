@@ -1,0 +1,13 @@
+{
+  "format": "twilic-testdata/v1",
+  "specification": "Twilic v3",
+  "groups": {
+    "dynamic": "testdata/dynamic",
+    "bound": "testdata/bound",
+    "batch": "testdata/batch",
+    "stateful": "testdata/stateful"
+  },
+  "wire_fixtures": "conformance/fixtures",
+  "wire_vectors": "conformance/vectors",
+  "malformed_inputs": "conformance/malformed"
+}

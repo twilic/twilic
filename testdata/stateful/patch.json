@@ -1,0 +1,16 @@
+{
+  "base": {
+    "id": 1,
+    "name": "alice",
+    "role": "user"
+  },
+  "next": {
+    "id": 1,
+    "name": "alicia",
+    "role": "admin"
+  },
+  "operations": [
+    "replace name",
+    "replace role"
+  ]
+}

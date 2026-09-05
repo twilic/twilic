@@ -1,0 +1,11 @@
+[package]
+name = "control-stream-decode"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "control_stream_decode"
+path = "src/main.rs"
+
+[dependencies]
+twilic = { path = "../../../rust" }

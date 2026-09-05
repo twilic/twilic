@@ -1,0 +1,26 @@
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+dist/
+build/
+*.so
+*.whl
+
+# Node (markdown tooling)
+node_modules/
+
+# Rust interop scripts
+/scripts/rust-client-check/target/
+/scripts/rust-server-fixtures/target/
+
+# OS
+.DS_Store

@@ -1,0 +1,20 @@
+# R package
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+/doc/
+/Meta/
+man/
+
+# Node (markdown CI)
+/node_modules/
+
+# Rust interop build artifacts
+/scripts/rust-client-check/target/
+/scripts/rust-server-fixtures/target/
+
+# OS / editor
+.DS_Store
+*.swp

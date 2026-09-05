@@ -1,1 +1,20 @@
 node_modules/
+.cache/
+
+# Generated artifacts from language-specific build systems.
+**/.venv/
+**/.pytest_cache/
+**/.ruff_cache/
+**/.dart_tool/
+**/.gradle/
+**/.kotlin/
+**/_build/
+**/build/
+**/dist/
+**/target/
+**/.zig-cache/
+**/vendor
+**/vendor/
+**/.pnpm-store/
+**/native/*.node
+**/wasm/pkg/*.wasm

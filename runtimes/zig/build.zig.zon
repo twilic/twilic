@@ -1,0 +1,17 @@
+.{
+    .name = .twilic,
+    .version = "3.0.0",
+    .fingerprint = 0xde4b86a72cbd947,
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{},
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+        "tests",
+        "docs",
+        "README.md",
+        "LICENSE",
+        ".editorconfig",
+    },
+}

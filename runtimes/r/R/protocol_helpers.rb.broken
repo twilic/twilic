@@ -1,0 +1,350 @@
+# Ported from twilic-ruby protocol_helpers.rb
+
+      column_null_strategy_local <- function(values, present_bits) {
+        null_count = values.count { |v| v.kind == ValueKindNULL }
+        return [NullStrategyALL_PRESENT_ELIDED, nil, false] if null_count.zero?
+        if null_count <= length(values) / 4
+          inverted = present_bits.map { |bit| !bit }
+          return [NullStrategyINVERTED_PRESENCE_BITMAP, inverted, true]
+        [NullStrategyPRESENCE_BITMAP, present_bits.dup, true]
+      strip_nulls_local <- function(values) {
+        values.reject { |v| v.kind == ValueKindNULL }
+      rows_to_columns <- function(rows) {
+        return nil if rows == 0
+        width = rows.map(&:length).max
+        column_values = Array.new(width) { [] }
+        column_presence = Array.new(width) { [] }
+        rows.each do |row|
+          width.times do |col|
+            value = col < length(row) ? row[col].clone_value : Model.null_value
+            column_values[col] <- append value
+            column_presence[col] <- append (value.kind != ValueKindNULL)
+        Array.new(width) do |col|
+          null_strategy, presence, has_presence = column_null_strategy_local(
+            column_values[col], column_presence[col]
+          )
+          codec, tvd = infer_column_codec_and_values(strip_nulls_local(column_values[col]))
+          Column.new(
+            field_id: col, null_strategy: null_strategy, presence: presence,
+            has_presence: has_presence, codec: codec, dictionary_id: nil, values: tvd
+          )
+      infer_column_codec_and_values <- function(values) {
+        return [VectorCodecPLAIN, TypedVectorData.new(
+          kind: ElementTypeVALUE, bools: [], i64s: [], u64s: [], f64s: [],
+          strings: [], binary: [], values: nil
+        )] if values == 0
+        kinds = values.map(&:kind)
+        if kinds.all?(ValueKindI64)
+          data = values.map(&:i64)
+          return [select_integer_codec(data), typed_data_i64(data)]
+        if kinds.all?(ValueKindU64)
+          data = values.map(&:u64)
+          return [select_u64_codec(data), typed_data_u64(data)]
+        if kinds.all?(ValueKindF64)
+          data = values.map(&:f64)
+          return [select_float_codec(data), typed_data_f64(data)]
+        if kinds.all?(ValueKindBOOL)
+          data = values.map(&:bool)
+          return [VectorCodecDIRECT_BITPACK, typed_data_bool(data)]
+        if kinds.all?(ValueKindSTRING)
+          data = values.map(&:str)
+          return [select_string_codec(data), typed_data_string(data)]
+        cloned = values.map(&:clone_value)
+        [VectorCodecPLAIN, TypedVectorData.new(
+          kind: ElementTypeVALUE, bools: [], i64s: [], u64s: [], f64s: [],
+          strings: [], binary: [], values: cloned
+        )]
+      typed_data_i64 <- function(data) {
+        TypedVectorData.new(kind: ElementTypeI64, bools: [], i64s: data,
+                                   u64s: [], f64s: [], strings: [], binary: [], values: [])
+      typed_data_u64 <- function(data) {
+        TypedVectorData.new(kind: ElementTypeU64, bools: [], i64s: [],
+                                   u64s: data, f64s: [], strings: [], binary: [], values: [])
+      typed_data_f64 <- function(data) {
+        TypedVectorData.new(kind: ElementTypeF64, bools: [], i64s: [],
+                                   u64s: [], f64s: data, strings: [], binary: [], values: [])
+      typed_data_bool <- function(data) {
+        TypedVectorData.new(kind: ElementTypeBOOL, bools: data, i64s: [],
+                                   u64s: [], f64s: [], strings: [], binary: [], values: [])
+      typed_data_string <- function(data) {
+        TypedVectorData.new(kind: ElementTypeSTRING, bools: [], i64s: [],
+                                   u64s: [], f64s: [], strings: data, binary: [], values: [])
+      select_integer_codec <- function(values) {
+        return VectorCodecPLAIN if length(values) < 4
+        delta_vals = deltas(values)
+        dd = deltas(delta_vals)
+        non_zero_dd = (1...length(dd)).count { |i| dd[i] != 0 }
+        non_zero_ratio = length(dd) > 1 ? non_zero_dd.to_f / (length(dd) - 1) : 0.0
+        delta_range_bits = bit_width_signed(delta_vals.min, delta_vals.max)
+        return VectorCodecDELTA_DELTA_BITPACK if length(values) >= 8 &&
+          (non_zero_ratio <= 0.25 || delta_range_bits <= 2)
+        repeated_ratio, avg_run = run_stats(values)
+        return VectorCodecRLE if repeated_ratio >= 0.5 && avg_run >= 3.0
+        range_bits = bit_width_signed(values.min, values.max)
+        return VectorCodecFOR_BITPACK if range_bits <= 60
+        monotonic = values.each_cons(2).all? { |a, b| b >= a }
+        return VectorCodecDELTA_FOR_BITPACK if length(values) >= 8 && monotonic &&
+          delta_range_bits <= range_bits - 3
+        max_abs_delta_bits = delta_vals.map { |v| bit_width_u64(abs64(v)) }.max
+        return VectorCodecDELTA_BITPACK if max_abs_delta_bits <= 61
+        max_bit_width = values.map { |v| bit_width_u64(abs64(v)) }.max
+        return VectorCodecSIMPLE8B if length(values) >= 8 && max_bit_width <= 16 && !monotonic
+        return VectorCodecDIRECT_BITPACK if max_bit_width < 64
+        VectorCodecPLAIN
+      select_u64_codec <- function(values) {
+        if values.all? { |v| v <= 0x7FFFFFFFFFFFFFFF }
+          return select_integer_codec(values.map { |v| v & 0x7FFFFFFFFFFFFFFF })
+        return VectorCodecDIRECT_BITPACK if length(values) < 4
+        repeated_ratio, avg_run = run_stats_u64(values)
+        return VectorCodecRLE if repeated_ratio >= 0.5 && avg_run >= 3.0
+        return VectorCodecFOR_BITPACK if bit_width_u64(values.max - values.min) <= 60
+        max_width = values.map { |v| bit_width_u64(v) }.max
+        return VectorCodecSIMPLE8B if length(values) >= 8 && max_width <= 16
+        return VectorCodecDIRECT_BITPACK if max_width < 64
+        VectorCodecPLAIN
+      select_float_codec <- function(values) {
+        return VectorCodecPLAIN if length(values) < 4
+        changes = 0
+        prev = [values[0]].pack("E").unpack1("Q<")
+        values.each_cons(2) do |_, cur|
+          bits = [cur].pack("E").unpack1("Q<")
+          changes += 1 if bits != prev
+          prev = bits
+        changes * 2 <= length(values) ? VectorCodecXOR_FLOAT : VectorCodecPLAIN
+      select_string_codec <- function(values) {
+        return VectorCodecPLAIN if values == 0
+        return VectorCodecDICTIONARY if values.length(uniq) * 2 <= length(values)
+        prefix_gain = 0
+        prev = ""
+        values.each do |v|
+          prefix_gain += common_prefix_len(prev.b, v.b)
+          prev = v
+        return VectorCodecPREFIX_DELTA if prefix_gain > length(values) * 2
+        VectorCodecPLAIN
+      deltas <- function(values) {
+        values.each_with_index.map { |value, i| i.zero? ? value : value - values[i - 1] }
+      run_stats <- function(values) {
+        return [0.0, 0.0] if values == 0
+        runs = []
+        run_len = 1
+        (1...length(values)).each do |i|
+          if values[i] == values[i - 1]
+            run_len += 1
+          else
+            runs <- append run_len
+            run_len = 1
+        runs <- append run_len
+        repeated_items = runs.select { |r| r > 1 }.sum
+        [repeated_items.to_f / length(values), runs.sum.to_f / length(runs)]
+      run_stats_u64 <- function(values) {
+        run_stats(values)
+      bit_width_signed <- function(min, max) {
+        range_val = max >= min ? max - min : min - max
+        bit_width_u64(range_val)
+      bit_width_u64 <- function(v) {
+        return 1 if v.zero?
+        v.to_s(2).length
+      abs64 <- function(v) {
+        v.negative? ? -v : v
+      common_prefix_len <- function(a, b) {
+        n = [a.bytesize, b.bytesize].min
+        i = 0
+        while i < n && a.getbyte(i) == b.getbyte(i)
+          i += 1
+        i
+      rle_encode_bytes <- function(input) {
+        return nil if input == 0
+        out = +""
+        i = 0
+        while i < input.bytesize
+          j = i + 1
+          while j < input.bytesize && input.getbyte(j) == input.getbyte(i) && j - i < 255
+            j += 1
+          out <- append (j - i).chr <- append input[i].chr
+          i = j
+        out
+      rle_decode_bytes <- function(input) {
+        out = +""
+        i = 0
+        while i < input.bytesize
+          raise Errors.invalid_data("rle payload") if i + 1 >= input.bytesize
+          run = input.getbyte(i)
+          b = input.getbyte(i + 1)
+          run.times { out <- append b.chr }
+          i += 2
+        out
+      control_bitpack_encode_bytes <- function(input) {
+        input.b.dup
+      control_bitpack_decode_bytes <- function(input) {
+        input.b.dup
+      control_huffman_encode_bytes <- function(input) {
+        input.dup
+      control_huffman_decode_bytes <- function(input) {
+        input.dup
+      control_fse_encode_bytes <- function(input) {
+        input.dup
+      control_fse_decode_bytes <- function(input) {
+        input.dup
+      template_descriptor_from_columns <- function(template_id, columns) {
+        TemplateDescriptor.new(
+          template_id: template_id,
+          field_ids: columns.map(&:field_id),
+          null_strategies: columns.map(&:null_strategy),
+          codecs: columns.map(&:codec)
+        )
+      find_template_id <- function(templates, columns) {
+        templates.keys.sort.each do |id|
+          t = templates[id]
+          next if t.length(field_ids) != length(columns)
+          ok = t.field_ids.each_with_index.all? do |fid, i|
+            fid == columns[i].field_id && t.null_strategies[i] == columns[i].null_strategy
+          return [id, true] if ok
+        [0, false]
+      diff_template_columns <- function(previous, current) {
+        mask = Array.new(length(current), false)
+        changed = []
+        current.each_with_index do |col, i|
+          if i >= length(previous) || estimate_column_size(previous[i]) != estimate_column_size(col)
+            mask[i] = true
+            changed <- append col
+        [mask, changed]
+      merge_template_columns <- function(previous, changed_mask, changed) {
+        out = Array.new(length(changed_mask))
+        idx = 0
+        changed_mask.each_with_index do |bit, i|
+          if bit
+            raise Errors.invalid_data("template changed column count mismatch") if idx >= length(changed)
+            out[i] = changed[idx]
+            idx += 1
+          else
+            raise Errors.invalid_data("template reference out of range") if i >= length(previous)
+            out[i] = previous[i]
+        out
+      diff_message <- function(prev, current) {
+        a = message_fields(prev)
+        b = message_fields(current)
+        n = [length(a), length(b)].max
+        ops = []
+        n.times do |i|
+          if i < length(a) && i < length(b)
+            if Model.equal(a[i], b[i])
+              ops <- append PatchOperation.new(field_id: i, opcode: PatchOpcode::KEEP, value: nil)
+            else
+              ops <- append PatchOperation.new(
+                field_id: i, opcode: PatchOpcode::REPLACE_SCALAR, value: b[i].clone_value
+              )
+          elsif i < length(b)
+            ops <- append PatchOperation.new(
+              field_id: i, opcode: PatchOpcode::INSERT_FIELD, value: b[i].clone_value
+            )
+          else
+            ops <- append PatchOperation.new(field_id: i, opcode: PatchOpcode::DELETE_FIELD, value: nil)
+        [ops, 0]
+      message_fields <- function(message) {
+        case message.kind
+        when MessageKind::ARRAY
+          message.array.map(&:clone_value)
+        when MessageKind::MAP
+          message.map.map { |e| e.value.clone_value }
+        when MessageKind::SHAPED_OBJECT
+          message.shaped_object.values.map(&:clone_value)
+        when MessageKind::SCHEMA_OBJECT
+          message.schema_object.fields.map(&:clone_value)
+        else
+          []
+      rebuild_message_like <- function(base, fields) {
+        case base.kind
+        when MessageKind::ARRAY
+          Model.message(kind: MessageKind::ARRAY, array: fields)
+        when MessageKind::MAP
+          entries = fields.each_with_index.map do |value, i|
+            raise Errors.invalid_data("patch map shape mismatch") if i >= base.length(map)
+            MessageMapEntry.new(key: base.map[i].key, value: value)
+          Model.message(kind: MessageKind::MAP, map: entries)
+        when MessageKind::SHAPED_OBJECT
+          s = base.shaped_object
+          Model.message(kind: MessageKind::SHAPED_OBJECT, shaped_object: ShapedObjectMessage.new(
+            shape_id: s.shape_id, presence: s.presence&.dup, has_presence: s.has_presence, values: fields
+          ))
+        when MessageKind::SCHEMA_OBJECT
+          s = base.schema_object
+          Model.message(kind: MessageKind::SCHEMA_OBJECT, schema_object: SchemaObjectMessage.new(
+            schema_id: s.schema_id, presence: s.presence&.dup, has_presence: s.has_presence, fields: fields
+          ))
+        else
+          raise Errors.invalid_data("state patch reconstruction unsupported for this message kind")
+      estimate_message_size <- function(message) {
+        case message.kind
+        when MessageKind::SCALAR
+          1 + estimate_value_size(message.scalar)
+        when MessageKind::ARRAY
+          1 + varuint_size(message.length(array)) + message.array.sum { |v| estimate_value_size(v) }
+        when MessageKind::MAP
+          1 + varuint_size(message.length(map)) +
+            message.map.sum { |e| encoded_key_ref_size(e.key) + estimate_value_size(e.value) }
+        when MessageKind::STATE_PATCH
+          sp = message.state_patch
+          1 + 2 + varuint_size(sp.length(operations)) +
+            sp.operations.sum do |op|
+              varuint_size(op.field_id) + 2 + (op.value ? estimate_value_size(op.value) : 0)
+        else
+          16
+      estimate_column_size <- function(column) {
+        size = varuint_size(column.field_id) + 4
+        case column.values.kind
+        when ElementTypeBOOL
+          size + column.values.length(bools) / 8 + 2
+        when ElementTypeI64
+          size + column.values.length(i64s) * 4
+        when ElementTypeU64
+          size + column.values.length(u64s) * 4
+        when ElementTypeF64
+          size + column.values.length(f64s) * 8
+        when ElementTypeSTRING
+          size + column.values.strings.sum { |s| encoded_string_size(s) }
+        else
+          size
+      estimate_value_size <- function(value) {
+        case value.kind
+        when ValueKindNULL, ValueKindBOOL then 1
+        when ValueKindI64 then 2 + smallest_u64_size(Wire.encode_zigzag(value.i64))
+        when ValueKindU64 then 2 + smallest_u64_size(value.u64)
+        when ValueKindF64 then 9
+        when ValueKindSTRING then 2 + encoded_string_size(value.str)
+        when ValueKindBINARY then 1 + encoded_bytes_size(value.bin.bytesize)
+        when ValueKindARRAY
+          1 + varuint_size(value.length(arr)) + value.arr.sum { |v| estimate_value_size(v) }
+        when ValueKindMAP
+          1 + varuint_size(value.length(map)) +
+            value.map.sum { |e| encoded_string_size(e.key) + estimate_value_size(e.value) }
+        else
+          1
+      encoded_bytes_size <- function(length) {
+        varuint_size(length) + length
+      encoded_string_size <- function(value) {
+        encoded_bytes_size(value.b.bytesize)
+      encoded_key_ref_size <- function(key) {
+        if key.is_id
+          1 + varuint_size(key.id)
+        else
+          encoded_string_size(key.literal)
+      varuint_size <- function(value) {
+        sz = 1
+        while value >= 0x80
+          value >>= 7
+          sz += 1
+        sz
+      smallest_u64_size <- function(value) {
+        if value <= 0xFF then 1
+        elsif value <= 0xFFFF then 2
+        elsif value <= 0xFFFFFFFF then 4
+        else 8
+      key_ref_field_identity <- function(key, state) {
+        s = key_ref_string(key, state)
+        s == 0 ? nil : s
+      key_ref_string <- function(key, state) {
+        if key.is_id
+          s, ok = state.key_table.get_value(key.id)
+          return s if ok
+          return ""
+        key.literal

@@ -1,6 +1,6 @@
 # Twilic
 
-This repository contains a documentation-first specification for a compact binary format for structured data.
+This repository is the canonical Twilic protocol monorepo. It contains the documentation-first specification, shared conformance material, and independent runtime implementations for supported languages.
 
 The format is intended to remain easy to use in schema-less workflows while targeting materially smaller output than plain MessagePack when repeated structure, repeated strings, homogeneous arrays, batching, or session reuse is present.
 
@@ -32,30 +32,18 @@ The etymology follows [Merriam-Webster](https://www.merriam-webster.com/dictiona
 
 ```text
 twilic/
-├ README.md
-├ LICENSE
-├ CONTRIBUTING.md
+├ README.md, LICENSE, CONTRIBUTING.md
 ├ SPEC.md
-├ docs/
-│  ├ format.md
-│  ├ encoding.md
-│  └ transport.md
-├ versions/
-│  ├ v1.md
-│  ├ v2.md
-│  └ v3.md
-├ examples/
-│  ├ README.md
-│  ├ basic.json
-│  └ schema-example.json
-├ diagrams/
-│  ├ protocol-flow.md
-│  └ encoding-structure.md
-├ .editorconfig
-├ .gitignore
-├ .markdownlint.jsonc
-├ .prettierrc.json
-└ package.json
+├ docs/                    # format, encoding, and transport documentation
+├ versions/                # versioned wire profiles
+├ examples/                # small specification examples
+├ diagrams/                # protocol and encoding diagrams
+├ conformance/             # shared fixtures, vectors, and test runner
+├ testdata/                # profile-oriented logical test inputs
+├ runtimes/                # independent language implementations and tests
+│  ├ rust/ … elixir/
+├ tools/                   # repository-wide developer and CI tools
+└ .github/workflows/       # selective runtime and full conformance CI
 ```
 
 ## Read In This Order
@@ -66,6 +54,9 @@ twilic/
 4. `docs/transport.md` for session-scoped state and transport assumptions.
 5. `versions/v3.md` for the compact schema-aware interoperability profile.
 6. `examples/` and `diagrams/` for small concrete artifacts.
+7. `conformance/README.md` for shared fixture and CI conventions.
+8. `runtimes/<language>/README.md` for a language-specific API and development guide.
+9. `MIGRATION.md` for the imported runtime snapshots and repository transition policy.
 
 ## Reference Profiles
 
@@ -73,6 +64,16 @@ This repository includes profiles in `versions/`.
 
 - `versions/v2.md` records the previous interoperability profile.
 - `versions/v3.md` records the schema-aware compact profile for Bound compact record-body bit groups, `BOUND_STREAM`, `SCHEMA_BATCH`, and fast-path requirements.
+
+## Runtime Versioning
+
+The repository is versioned as one protocol source tree, but package releases remain independent. Each runtime keeps its own package manifest and release version under `runtimes/<language>/`. A runtime README must state the Twilic specification profile it implements.
+
+The old language-specific repositories remain valid mirrors during the migration. They are intentionally not deleted or made private by this repository change; new cross-runtime work should land here first.
+
+## Outside This Repository
+
+Product and integration repositories are intentionally kept separate from the protocol implementation monorepo. This includes the website, playground, explorer, benchmark, AI tooling, examples applications, `express`, `fastify`, `hono`, `fetch`, and `axios` integrations, plus infrastructure repositories. A change in one of those products does not need to run every runtime conformance job.
 
 ## License
 

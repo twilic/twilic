@@ -1,0 +1,11 @@
+/_build/
+/deps/
+.elixir_ls/
+.DS_Store
+/node_modules/
+
+# BEAM crash dumps (local dev only)
+erl_crash.dump
+
+# Rust interop / helper binaries (rebuilt locally)
+/scripts/**/target/

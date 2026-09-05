@@ -1,0 +1,6 @@
+/build/
+/build-c/
+/scripts/rust-server-fixtures/target/
+/scripts/rust-client-check/target/
+/node_modules/
+.DS_Store

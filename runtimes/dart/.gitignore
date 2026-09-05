@@ -1,0 +1,12 @@
+.dart_tool/
+.packages
+build/
+.DS_Store
+/node_modules/
+
+# Rust interop / helper binaries (rebuilt locally)
+/scripts/**/target/
+
+# Python port tooling
+__pycache__/
+*.py[cod]

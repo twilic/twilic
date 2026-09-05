@@ -1,0 +1,15 @@
+.gradle/
+build/
+.kotlin/
+.idea/
+*.iml
+out/
+.DS_Store
+/node_modules/
+/scripts/port-archive/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Rust interop / helper binaries (rebuilt locally)
+/scripts/**/target/

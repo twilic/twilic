@@ -1,0 +1,14 @@
+{
+  "name": "twilic-swift",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "format": "prettier --write \"{README.md,docs/**/*.md,.github/**/*.md}\"",
+    "format:check": "prettier --check \"{README.md,docs/**/*.md,.github/**/*.md}\"",
+    "lint": "markdownlint-cli2 \"{README.md,docs/**/*.md}\""
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.22.1",
+    "prettier": "^3.8.3"
+  }
+}

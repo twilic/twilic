@@ -1,0 +1,5 @@
+dist/
+native/
+wasm/
+target/
+node_modules/

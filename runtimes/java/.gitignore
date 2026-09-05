@@ -1,0 +1,19 @@
+# Gradle / Java
+.gradle/
+build/
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
+hs_err_pid*
+
+# Node (markdown tooling)
+node_modules/
+
+# Rust interop scripts
+/scripts/rust-client-check/target/
+/scripts/rust-server-fixtures/target/
+
+# OS
+.DS_Store

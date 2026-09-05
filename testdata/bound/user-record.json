@@ -1,0 +1,12 @@
+{
+  "schema": [
+    { "name": "id", "type": "u64" },
+    { "name": "name", "type": "string" },
+    { "name": "active", "type": "bool" }
+  ],
+  "value": {
+    "id": 1001,
+    "name": "alice",
+    "active": true
+  }
+}

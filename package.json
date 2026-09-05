@@ -3,9 +3,13 @@
   "private": true,
   "packageManager": "pnpm@10.33.2",
   "scripts": {
-    "format": "prettier --write \"{README.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md}\"",
-    "format:check": "prettier --check \"{README.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md}\"",
-    "lint": "markdownlint-cli2 \"{README.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md}\"",
+    "format": "prettier --write \"{README.md,MIGRATION.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md,conformance/**/*.md,runtimes/README.md,runtimes/*/README.md,runtimes/*/docs/**/*.md,testdata/**/*.md}\"",
+    "format:check": "prettier --check \"{README.md,MIGRATION.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md,conformance/**/*.md,runtimes/README.md,runtimes/*/README.md,runtimes/*/docs/**/*.md,testdata/**/*.md}\"",
+    "lint": "markdownlint-cli2 \"{README.md,MIGRATION.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md,conformance/**/*.md,runtimes/README.md,runtimes/*/README.md,runtimes/*/docs/**/*.md,testdata/**/*.md}\"",
+    "test:runtime": "bash conformance/run.sh",
+    "test:all": "bash conformance/run.sh all",
+    "test:fixtures": "bash conformance/run.sh fixtures",
+    "generate:fixtures": "bash conformance/generate-fixtures.sh",
     "prepare": "husky"
   },
   "devDependencies": {

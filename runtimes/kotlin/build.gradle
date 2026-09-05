@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '2.3.21'
+}
+
+group = 'io.twilic'
+version = '3.0.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+kotlin {
+    jvmToolchain(21)
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.register('emitRustClientFixtures', JavaExec) {
+    group = 'interop'
+    description = 'Emit Rust client interop fixture frames'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.twilic.EmitRustClientFixtures'
+}
+
+tasks.register('decodeRustServerFixtures', JavaExec) {
+    group = 'interop'
+    description = 'Decode Rust server interop fixture frames from stdin'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'io.twilic.DecodeRustServerFixtures'
+    standardInput = System.in
+}
+
+sourceSets {
+    main {
+        java.srcDirs 'src/main/java'
+        kotlin.srcDirs 'src/main/kotlin'
+    }
+    test {
+        java.srcDirs 'src/test/java'
+        kotlin.srcDirs 'src/test/kotlin'
+    }
+}

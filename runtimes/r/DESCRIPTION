@@ -1,0 +1,28 @@
+Package: twilic
+Title: Twilic Wire Format for R
+Version: 3.0.0
+Authors@R: person("Twilic", email = "maintained-by-minagishl@users.noreply.github.com", role = c("aut", "cre"))
+Description: Native R implementation of the Twilic binary wire format and session-aware encoder/decoder.
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3
+Depends: R (>= 4.4.0)
+Imports: bit64
+Suggests: testthat (>= 3.2.0), lintr
+Collate:
+  utils.R
+  errors.R
+  wire.R
+  model.R
+  session.R
+  codec.R
+  dictionary.R
+  v2.R
+  protocol_helpers.R
+  protocol_io_messages.R
+  protocol_io.R
+  protocol.R
+  interop_fixtures.R
+  api.R
+  twilic.R

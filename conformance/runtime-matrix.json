@@ -1,0 +1,23 @@
+{
+  "specification": "Twilic v3",
+  "runtimes": [
+    { "name": "rust", "path": "runtimes/rust", "profile": "v3" },
+    { "name": "javascript", "path": "runtimes/javascript", "profile": "v3" },
+    { "name": "go", "path": "runtimes/go", "profile": "v3" },
+    { "name": "python", "path": "runtimes/python", "profile": "v2" },
+    { "name": "java", "path": "runtimes/java", "profile": "v2" },
+    { "name": "c", "path": "runtimes/c", "profile": "v2" },
+    { "name": "cpp", "path": "runtimes/cpp", "profile": "v2" },
+    { "name": "csharp", "path": "runtimes/csharp", "profile": "v2" },
+    { "name": "dart", "path": "runtimes/dart", "profile": "v2" },
+    { "name": "kotlin", "path": "runtimes/kotlin", "profile": "v2" },
+    { "name": "lua", "path": "runtimes/lua", "profile": "v2" },
+    { "name": "php", "path": "runtimes/php", "profile": "v2" },
+    { "name": "r", "path": "runtimes/r", "profile": "v2" },
+    { "name": "ruby", "path": "runtimes/ruby", "profile": "v2" },
+    { "name": "scala", "path": "runtimes/scala", "profile": "v2" },
+    { "name": "swift", "path": "runtimes/swift", "profile": "v2" },
+    { "name": "zig", "path": "runtimes/zig", "profile": "v3" },
+    { "name": "elixir", "path": "runtimes/elixir", "profile": "v2" }
+  ]
+}

@@ -1,0 +1,15 @@
+# sbt / Scala
+/target/
+/project/target/
+/project/project/
+
+# Node (markdown CI)
+/node_modules/
+
+# Rust interop build artifacts
+/scripts/rust-client-check/target/
+/scripts/rust-server-fixtures/target/
+
+# OS / editor
+.DS_Store
+*.swp

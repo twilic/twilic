@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A3024343-0FE8-421A-97E0-30AE80F9D9E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twilic", "src\Twilic\Twilic.csproj", "{CAC426F7-6997-4CCB-B154-740DAF5003C1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3688283F-9723-407A-9F76-7C7FD5652D86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Twilic.Tests", "tests\Twilic.Tests\Twilic.Tests.csproj", "{D771B85E-2ED3-491B-9F20-DC20B78CBC65}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAC426F7-6997-4CCB-B154-740DAF5003C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC426F7-6997-4CCB-B154-740DAF5003C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC426F7-6997-4CCB-B154-740DAF5003C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC426F7-6997-4CCB-B154-740DAF5003C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D771B85E-2ED3-491B-9F20-DC20B78CBC65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D771B85E-2ED3-491B-9F20-DC20B78CBC65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D771B85E-2ED3-491B-9F20-DC20B78CBC65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D771B85E-2ED3-491B-9F20-DC20B78CBC65}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CAC426F7-6997-4CCB-B154-740DAF5003C1} = {A3024343-0FE8-421A-97E0-30AE80F9D9E4}
+		{D771B85E-2ED3-491B-9F20-DC20B78CBC65} = {3688283F-9723-407A-9F76-7C7FD5652D86}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,7 @@
+build/
+cmake-build-*/
+.DS_Store
+/node_modules/
+
+# Rust interop / helper binaries (rebuilt locally)
+/scripts/**/target/
