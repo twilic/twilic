@@ -8,7 +8,7 @@ The format is intended to remain easy to use in schema-less workflows while targ
 
 Twilic (pronounced **TWIL-ik**) is named after Old English _twilic_, the root of the modern word _twill_.
 
-<audio controls src="media/twilic-pronunciation.mp3"></audio>
+[Listen to the pronunciation](https://raw.githubusercontent.com/twilic/twilic/main/media/twilic-pronunciation.mp3)
 
 _Twill_ is a weave built from repeated threads, often forming a diagonal pattern. The name reflects Twilic's core idea: repeated data shapes, keys, and values should not be sent again and again as independent structures, but woven together into a compact binary representation.
 

@@ -12,9 +12,6 @@
   },
   "MD031": true,
   "MD032": true,
-  "MD033": {
-    "allowed_elements": ["audio"],
-  },
   "MD040": true,
   "MD046": {
     "style": "fenced",
