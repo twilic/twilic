@@ -6,7 +6,9 @@ The format is intended to remain easy to use in schema-less workflows while targ
 
 ## Name
 
-Twilic is named after Old English _twilic_, the root of the modern word _twill_.
+Twilic (pronounced **TWIL-ik**) is named after Old English _twilic_, the root of the modern word _twill_.
+
+<audio controls src="media/twilic-pronunciation.mp3"></audio>
 
 _Twill_ is a weave built from repeated threads, often forming a diagonal pattern. The name reflects Twilic's core idea: repeated data shapes, keys, and values should not be sent again and again as independent structures, but woven together into a compact binary representation.
 
@@ -38,6 +40,7 @@ twilic/
 ├ versions/                # versioned wire profiles
 ├ examples/                # small specification examples
 ├ diagrams/                # protocol and encoding diagrams
+├ media/                   # pronunciation and brand media
 ├ conformance/             # shared fixtures, vectors, and test runner
 ├ testdata/                # profile-oriented logical test inputs
 ├ runtimes/                # independent language implementations and tests
