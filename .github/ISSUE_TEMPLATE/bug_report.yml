@@ -1,0 +1,96 @@
+name: Bug report
+description: Report a reproducible problem with Twilic.
+title: "bug: "
+labels:
+  - bug
+body:
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Runtime
+      description: Which runtime or shared component is affected?
+      options:
+        - Shared protocol or conformance
+        - C
+        - C++
+        - C#
+        - Dart
+        - Elixir
+        - Go
+        - Java
+        - JavaScript
+        - Kotlin
+        - Lua
+        - PHP
+        - Python
+        - R
+        - Ruby
+        - Rust
+        - Scala
+        - Swift
+        - Zig
+        - Multiple runtimes
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe what happened.
+      placeholder: Decoding fails for nested maps.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide clear steps or a minimal reproduction.
+      value: |
+        1. Step 1
+        2. Step 2
+        3. Step 3
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Describe what should happen.
+      placeholder: Decoding returns the original value.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Describe what actually happens.
+      placeholder: Decoding returns an invalid-data error.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include runtime version, OS, and other relevant details.
+      placeholder: |
+        - Runtime/version: Rust 1.89.0
+        - OS: macOS 15
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and additional context
+      description: Add logs, stack traces, screenshots, or links that may help.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I have searched for existing issues.
+          required: true
+        - label: I can reproduce this issue with the latest version.
+          required: true

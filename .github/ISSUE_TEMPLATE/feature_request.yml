@@ -1,0 +1,80 @@
+name: Feature request
+description: Propose a new feature or enhancement for Twilic.
+title: "feat: "
+labels:
+  - enhancement
+body:
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Runtime or scope
+      description: Which runtime or shared component would this affect?
+      options:
+        - Shared protocol or conformance
+        - C
+        - C++
+        - C#
+        - Dart
+        - Elixir
+        - Go
+        - Java
+        - JavaScript
+        - Kotlin
+        - Lua
+        - PHP
+        - Python
+        - R
+        - Ruby
+        - Rust
+        - Scala
+        - Swift
+        - Zig
+        - Multiple runtimes
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Briefly describe the feature you would like to see.
+      placeholder: Add support for X.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Explain why this feature is needed and what problem it solves.
+      placeholder: There is currently no way to do X, which makes Y difficult.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe how you would like this feature to work.
+      placeholder: Expose a new option `foo` that ...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe any alternative approaches you have considered.
+      placeholder: This could also be done via X, but ...
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add links, references, screenshots, or other relevant context.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I have searched for existing issues and discussions.
+          required: true
