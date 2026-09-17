@@ -7,8 +7,9 @@ body:
   - type: dropdown
     id: runtime
     attributes:
-      label: Runtime
-      description: Which runtime or shared component is affected?
+      label: Affected runtime(s)
+      description: Select all runtimes or shared components that apply.
+      multiple: true
       options:
         - Shared protocol or conformance
         - C
@@ -29,7 +30,6 @@ body:
         - Scala
         - Swift
         - Zig
-        - Multiple runtimes
     validations:
       required: true
   - type: textarea

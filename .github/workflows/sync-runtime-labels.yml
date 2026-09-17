@@ -1,0 +1,280 @@
+name: Sync runtime labels
+
+on:
+  issues:
+    types: [opened, edited]
+  pull_request:
+    types: [opened, edited, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: Sync runtime labels
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - name: Sync labels from runtime selection
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const RUNTIME_LABEL_COLOR = '1D76DB'
+            const SECTION_HEADING =
+              /^#{2,3}\s+Affected runtime\(s\)\s*$/i
+            const CHECKBOX_LINE =
+              /^\s*[-*+]\s+\[([ xX])\]\s+(.+?)\s*$/
+            const BULLET_LINE = /^\s*[-*+]\s+(.+?)\s*$/
+
+            // Display text -> repository label name
+            const RUNTIME_BY_TEXT = new Map([
+              ['shared protocol or conformance', 'shared'],
+              ['c', 'c'],
+              ['c++', 'cpp'],
+              ['c#', 'csharp'],
+              ['dart', 'dart'],
+              ['elixir', 'elixir'],
+              ['go', 'go'],
+              ['java', 'java'],
+              ['javascript', 'javascript'],
+              ['kotlin', 'kotlin'],
+              ['lua', 'lua'],
+              ['php', 'php'],
+              ['python', 'python'],
+              ['r', 'r'],
+              ['ruby', 'ruby'],
+              ['rust', 'rust'],
+              ['scala', 'scala'],
+              ['swift', 'swift'],
+              ['zig', 'zig'],
+            ])
+
+            const MANAGED_LABELS = new Set(RUNTIME_BY_TEXT.values())
+
+            const eventName = context.eventName
+            const payload = context.payload
+            let issue
+            if (eventName === 'issues') {
+              issue = payload.issue
+            } else if (
+              eventName === 'pull_request' ||
+              eventName === 'pull_request_target'
+            ) {
+              issue = payload.pull_request
+            } else {
+              core.info(`Unsupported event: ${eventName}`)
+              return
+            }
+
+            if (!issue) {
+              core.info('No issue or pull request payload found.')
+              return
+            }
+
+            const body = issue.body || ''
+            const section = extractRuntimeSection(body)
+            if (section === null) {
+              core.info('Runtime selection section not found; skipping.')
+              return
+            }
+
+            const selection = parseRuntimeSelection(section)
+            if (selection === null) {
+              core.info(
+                'Runtime selection section has no usable values; skipping.',
+              )
+              return
+            }
+
+            let selected = selection.selected
+
+            // Sole remaining value that is selected: adopt it.
+            if (
+              selected.length === 0 &&
+              selection.candidates.length === 1 &&
+              selection.candidates[0].selected
+            ) {
+              const fallback = slugifyLabel(selection.candidates[0].text)
+              if (fallback) {
+                selected = [fallback]
+                MANAGED_LABELS.add(fallback)
+                core.info(
+                  `Adopting sole selected runtime value as label: ${fallback}`,
+                )
+              }
+            }
+
+            selected = [...new Set(selected)]
+
+            const { owner, repo } = context.repo
+            const issue_number = issue.number
+
+            for (const name of selected) {
+              await ensureLabel(github, owner, repo, name)
+            }
+
+            const current = (issue.labels || [])
+              .map((label) =>
+                typeof label === 'string' ? label : label.name,
+              )
+              .filter(Boolean)
+
+            const toAdd = selected.filter((name) => !current.includes(name))
+            const toRemove = current.filter(
+              (name) => MANAGED_LABELS.has(name) && !selected.includes(name),
+            )
+
+            if (toAdd.length === 0 && toRemove.length === 0) {
+              core.info(
+                `Runtime labels already in sync for #${issue_number}: [${selected.join(', ')}]`,
+              )
+              return
+            }
+
+            for (const name of toRemove) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number,
+                  name,
+                })
+                core.info(`Removed label: ${name}`)
+              } catch (error) {
+                if (error.status !== 404) throw error
+              }
+            }
+
+            if (toAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number,
+                labels: toAdd,
+              })
+              core.info(`Added labels: ${toAdd.join(', ')}`)
+            }
+
+            core.info(
+              `Synced runtime labels on #${issue_number}: [${selected.join(', ')}]`,
+            )
+
+            function extractRuntimeSection(markdown) {
+              const lines = markdown.replace(/\r\n/g, '\n').split('\n')
+              let start = -1
+              for (let i = 0; i < lines.length; i++) {
+                if (SECTION_HEADING.test(lines[i].trim())) {
+                  start = i + 1
+                  break
+                }
+              }
+              if (start === -1) return null
+
+              const collected = []
+              for (let i = start; i < lines.length; i++) {
+                if (/^#{1,6}\s+/.test(lines[i].trim())) break
+                collected.push(lines[i])
+              }
+              return collected.join('\n')
+            }
+
+            function parseRuntimeSelection(sectionMarkdown) {
+              const checkboxItems = []
+              for (const line of sectionMarkdown.split('\n')) {
+                const match = line.match(CHECKBOX_LINE)
+                if (!match) continue
+                checkboxItems.push({
+                  selected: match[1].toLowerCase() === 'x',
+                  text: match[2].trim(),
+                })
+              }
+
+              // PR template checklist path
+              if (checkboxItems.length > 0) {
+                const selected = []
+                for (const item of checkboxItems) {
+                  if (!item.selected) continue
+                  const mapped = RUNTIME_BY_TEXT.get(normalizeText(item.text))
+                  if (mapped) selected.push(mapped)
+                }
+                return {
+                  candidates: checkboxItems,
+                  selected,
+                }
+              }
+
+              // Issue form dropdown path (single or multiple:true)
+              const values = []
+              for (const rawLine of sectionMarkdown.split('\n')) {
+                const line = rawLine.trim()
+                if (!line || line === '_No response_') continue
+
+                const bullet = line.match(BULLET_LINE)
+                if (bullet) {
+                  values.push(bullet[1].trim())
+                  continue
+                }
+
+                for (const part of line.split(',')) {
+                  const text = part.trim()
+                  if (text) values.push(text)
+                }
+              }
+
+              if (values.length === 0) return null
+
+              const candidates = values.map((text) => ({
+                selected: true,
+                text,
+              }))
+              const selected = []
+              for (const value of values) {
+                const mapped = RUNTIME_BY_TEXT.get(normalizeText(value))
+                if (mapped) selected.push(mapped)
+              }
+
+              return { candidates, selected }
+            }
+
+            function normalizeText(text) {
+              return text.replace(/\s+/g, ' ').trim().toLowerCase()
+            }
+
+            function slugifyLabel(text) {
+              const normalized = normalizeText(text)
+              if (RUNTIME_BY_TEXT.has(normalized)) {
+                return RUNTIME_BY_TEXT.get(normalized)
+              }
+              return normalized
+                .replace(/\+\+/g, 'pp')
+                .replace(/#/g, 'sharp')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .slice(0, 50)
+            }
+
+            async function ensureLabel(githubClient, ownerName, repoName, name) {
+              try {
+                await githubClient.rest.issues.getLabel({
+                  owner: ownerName,
+                  repo: repoName,
+                  name,
+                })
+              } catch (error) {
+                if (error.status !== 404) throw error
+                core.info(`Creating missing label: ${name}`)
+                try {
+                  await githubClient.rest.issues.createLabel({
+                    owner: ownerName,
+                    repo: repoName,
+                    name,
+                    color: RUNTIME_LABEL_COLOR,
+                    description: `Runtime / language topic: ${name}`,
+                  })
+                } catch (createError) {
+                  // Concurrent create or label restored between get and create.
+                  if (createError.status !== 422) throw createError
+                }
+              }
+            }
