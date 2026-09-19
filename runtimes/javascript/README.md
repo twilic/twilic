@@ -148,23 +148,16 @@ pnpm build
 pnpm pack
 ```
 
-GitHub Actions publish uses [npm trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/)—no long-lived `NPM_TOKEN` secret.
-
-One-time setup on [npmjs.com](https://www.npmjs.com/package/@twilic/core): open the package → **Settings** → **Trusted Publisher** → **GitHub Actions**, then set **Organization or user** `twilic`, **Repository** `twilic`, and **Workflow filename** `publish-npm.yml` (exact name, including `.yml`). See also [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
-
-Release steps:
-
-1. Bump `version` in `package.json`.
-2. Create and push matching tag `runtimes/javascript/v<version>`.
-
-Example:
+Release tags use `runtimes/javascript/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)):
 
 ```bash
 git tag runtimes/javascript/v3.1.0
 git push origin runtimes/javascript/v3.1.0
 ```
 
-See [`docs/releases.md`](../../docs/releases.md). The publish workflow verifies tag/version match and then runs `npm publish` (OIDC authentication via `id-token: write`).
+Automated npm publish is not wired in this monorepo yet. `.github/workflows/publish-npm.yml` is still missing, so do not configure npm Trusted Publisher against `twilic/twilic` until that workflow lands. Until then, publish manually from a built package after verifying `pnpm pack`, or wait for the publish workflow to be restored from the former `twilic-js` automation.
+
+When `publish-npm.yml` is added, prefer [npm trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/) with Organization `twilic`, Repository `twilic`, and Workflow filename `publish-npm.yml`. See also [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
 
 ## License
 
