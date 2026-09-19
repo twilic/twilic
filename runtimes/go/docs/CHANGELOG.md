@@ -64,7 +64,3 @@ Initial public release of the Go implementation of Twilic, tracking the v3 relea
 - Align literal key encoding with twilic-rust so first map fields are not written as unresolved key refs.
 - Register shapes on decode after repeated map observations, matching twilic-rust session behavior.
 - Skip Rust-dependent interop Go tests when `twilic-rust` is not checked out (fixes CI on the default workflow).
-
-[unreleased]: https://github.com/twilic/twilic/compare/runtimes/go/v3.1.0...HEAD
-[3.1.0]: https://github.com/twilic/twilic/compare/runtimes/go/v3.0.0...runtimes/go/v3.1.0
-[3.0.0]: https://github.com/twilic/twilic/releases/tag/runtimes/go/v3.0.0

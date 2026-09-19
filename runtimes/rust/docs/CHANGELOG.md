@@ -71,8 +71,3 @@ Initial public release of the Rust implementation of Recurram.
 ### Fixed
 
 - Add missing crates.io package metadata (`description`, `license`) so `cargo publish` succeeds.
-
-[unreleased]: https://github.com/twilic/twilic/compare/runtimes/rust/v3.1.0...HEAD
-[3.1.0]: https://github.com/twilic/twilic/compare/runtimes/rust/v2.0.0...runtimes/rust/v3.1.0
-[2.0.0]: https://github.com/twilic/twilic/compare/runtimes/rust/v0.1.0...runtimes/rust/v2.0.0
-[0.1.0]: https://github.com/twilic/twilic/releases/tag/runtimes/rust/v0.1.0

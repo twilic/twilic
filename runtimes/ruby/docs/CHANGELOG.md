@@ -26,6 +26,3 @@ Initial public release of the Ruby implementation of Twilic, tracking the v3 rel
 ### Fixed
 
 - PR Message Check: skip template validation for Dependabot pull requests.
-
-[unreleased]: https://github.com/twilic/twilic/compare/runtimes/ruby/v3.0.0...HEAD
-[3.0.0]: https://github.com/twilic/twilic/releases/tag/runtimes/ruby/v3.0.0

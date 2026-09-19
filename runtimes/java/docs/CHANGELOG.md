@@ -26,5 +26,3 @@ Initial public release of the Python implementation of Twilic, tracking the v3 r
 ### Fixed
 
 - PR Message Check: skip template validation for Dependabot pull requests.
-
-[3.0.0]: https://github.com/twilic/twilic/releases/tag/runtimes/java/v3.0.0
