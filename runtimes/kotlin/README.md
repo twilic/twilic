@@ -14,7 +14,7 @@ This library's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-kotlin/
+runtimes/kotlin/
   src/main/kotlin/io/twilic/           # public API + v2 wire (Kotlin)
   src/main/java/io/twilic/internal/core/  # protocol codec (Java, migration)
   src/test/
@@ -51,7 +51,7 @@ val encoded = Twilic.encode(value)
 val decoded = Twilic.decode(encoded)
 ```
 
-Public `encode` / `decode` use the v2 wire profile (`V2.encodeV2` / `V2.decodeV2`), ported from [twilic-python](https://github.com/twilic/twilic-python).
+Public `encode` / `decode` use the v2 wire profile (`V2.encodeV2` / `V2.decodeV2`), ported from [runtimes/python](https://github.com/twilic/twilic/tree/main/runtimes/python).
 
 Regenerate `V2.kt` after editing the Python reference:
 
@@ -108,7 +108,7 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 
 ## Spec parity
 
-Tracks [twilic/twilic](https://github.com/twilic/twilic), [twilic-java](https://github.com/twilic/twilic-java), and [twilic-python](https://github.com/twilic/twilic-python).
+Lives in [twilic/twilic](https://github.com/twilic/twilic), [runtimes/java](https://github.com/twilic/twilic/tree/main/runtimes/java), and [runtimes/python](https://github.com/twilic/twilic/tree/main/runtimes/python).
 
 ## License
 

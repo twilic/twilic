@@ -7,7 +7,7 @@ This module's default `Twilic.encode` / `Twilic.decode` API targets Twilic v2 (v
 ## Project layout
 
 ```text
-twilic-lua/
+runtimes/lua/
   src/twilic/init.lua       # public API
   src/twilic/core/          # wire, model, codec, session, protocol, v2
   spec/                     # busted tests (ported from twilic-ruby)

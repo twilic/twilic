@@ -14,7 +14,7 @@ This package's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-python/
+runtimes/python/
   src/twilic/                     # wire, model, codec, session, protocol, v2
   tests/                          # spec conformance and interop tests
   scripts/                        # Rust interop fixtures and smoke checks
@@ -112,7 +112,7 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 
 ## Spec parity
 
-This package mirrors the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic-rust), [Go](https://github.com/twilic/twilic-go), and [Zig](https://github.com/twilic/twilic-zig) reference implementations.
+This package implements the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic/tree/main/runtimes/rust), [Go](https://github.com/twilic/twilic/tree/main/runtimes/go), and [Zig](https://github.com/twilic/twilic/tree/main/runtimes/zig) reference implementations.
 
 See [`docs/SPEC-TEST-TRACEABILITY.md`](docs/SPEC-TEST-TRACEABILITY.md) for the spec-section to test mapping.
 

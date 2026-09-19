@@ -4,8 +4,8 @@ package = "twilic"
 version = "3.0.0-1"
 
 source = {
-  url = "https://github.com/twilic/twilic-lua/archive/v3.0.0.tar.gz",
-  tag = "v3.0.0",
+  url = "https://github.com/twilic/twilic/archive/refs/tags/runtimes/lua/v3.0.0.tar.gz",
+  dir = "twilic-runtimes-lua-v3.0.0/runtimes/lua",
 }
 
 description = {
@@ -14,7 +14,7 @@ description = {
 Native Lua SDK for Twilic: dynamic encode/decode, schema-aware session encoding,
 batch and micro-batch messages, and Rust interop fixtures.
   ]],
-  homepage = "https://github.com/twilic/twilic-lua",
+  homepage = "https://github.com/twilic/twilic/tree/main/runtimes/lua",
   license = "MIT",
 }
 

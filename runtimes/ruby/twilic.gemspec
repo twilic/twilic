@@ -10,12 +10,12 @@ Gem::Specification.new do |spec|
 
   spec.summary = "Ruby implementation of a fast, compact binary wire format for modern data transport."
   spec.description = spec.summary
-  spec.homepage = "https://github.com/twilic/twilic-ruby"
+  spec.homepage = "https://github.com/twilic/twilic/tree/main/runtimes/ruby"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.3"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/twilic/twilic-ruby"
+  spec.metadata["source_code_uri"] = "https://github.com/twilic/twilic/tree/main/runtimes/ruby"
   spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.files = Dir.chdir(__dir__) do

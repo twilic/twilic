@@ -1,6 +1,6 @@
 package twilic
 
-import "github.com/twilic/twilic-go/internal/core"
+import "github.com/twilic/twilic/runtimes/go/internal/core"
 
 // Public API re-exports from internal/core.
 // Keep this as the only alias file in package twilic (do not add types.go with the same declarations).

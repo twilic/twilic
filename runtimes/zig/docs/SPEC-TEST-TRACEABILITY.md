@@ -1,6 +1,6 @@
 # SPEC Test Traceability (current Zig coverage)
 
-This file maps implemented `twilic/SPEC.md` behaviors to Zig tests in `twilic-zig/tests/main.zig`.
+This file maps implemented `twilic/SPEC.md` behaviors to Zig tests in `runtimes/zig/tests/main.zig`.
 
 ## 5. Dynamic Profile
 

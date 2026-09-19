@@ -8,13 +8,13 @@ This repository implements the Twilic wire format and session-aware encoder/deco
 
 ## Development
 
-Implementation code belongs in `lib/twilic`. Match API naming and behavior of [twilic-python](https://github.com/twilic/twilic-python) and [twilic-java](https://github.com/twilic/twilic-java) where applicable.
+Implementation code belongs in `lib/twilic`. Match API naming and behavior of [runtimes/python](https://github.com/twilic/twilic/tree/main/runtimes/python) and [runtimes/java](https://github.com/twilic/twilic/tree/main/runtimes/java) where applicable.
 
 ```bash
 mix deps.get && mix test
 ```
 
-Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as [twilic/twilic-go](https://github.com/twilic/twilic-go)):
+Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as the repository root):
 
 ```bash
 pnpm install

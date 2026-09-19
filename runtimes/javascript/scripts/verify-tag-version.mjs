@@ -12,7 +12,15 @@ if (!tag) {
   throw new Error("tag is required (set GITHUB_REF_NAME or pass tag as arg)");
 }
 
-const normalizedTag = tag.startsWith("v") ? tag.slice(1) : tag;
+const prefixes = ["runtimes/javascript/v", "javascript/v", "v"];
+let normalizedTag = tag;
+for (const prefix of prefixes) {
+  if (normalizedTag.startsWith(prefix)) {
+    normalizedTag = normalizedTag.slice(prefix.length);
+    break;
+  }
+}
+
 if (normalizedTag !== packageJson.version) {
   throw new Error(
     `tag/version mismatch: tag=${tag} package.json version=${packageJson.version}`

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [3.0.0] - 2026-05-24
 
-Initial public release of the Python implementation of Twilic, tracking the v3 release line shared with [twilic-rust](https://github.com/twilic/twilic-rust), [twilic-go](https://github.com/twilic/twilic-go), and [twilic-js](https://github.com/twilic/twilic-js).
+Initial public release of the Python implementation of Twilic, tracking the v3 release line shared with [runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust), [runtimes/go](https://github.com/twilic/twilic/tree/main/runtimes/go), and [runtimes/javascript](https://github.com/twilic/twilic/tree/main/runtimes/javascript).
 
 ### Added
 
@@ -27,4 +27,4 @@ Initial public release of the Python implementation of Twilic, tracking the v3 r
 
 - PR Message Check: skip template validation for Dependabot pull requests.
 
-[3.0.0]: https://github.com/twilic/twilic-python/releases/tag/v3.0.0
+[3.0.0]: https://github.com/twilic/twilic/releases/tag/runtimes/java/v3.0.0

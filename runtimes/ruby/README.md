@@ -14,7 +14,7 @@ This gem's default `Twilic.encode` / `Twilic.decode` API targets Twilic v2 (v3 s
 ## Project layout
 
 ```text
-twilic-ruby/
+runtimes/ruby/
   lib/twilic.rb                   # public API
   lib/twilic/core/                # wire, model, codec, session, protocol, v2
   scripts/                        # Rust interop fixtures and smoke checks
@@ -110,7 +110,7 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 
 ## Spec parity
 
-This gem mirrors the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic-rust), [Go](https://github.com/twilic/twilic-go), and [Zig](https://github.com/twilic/twilic-zig) reference implementations.
+This gem implements the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic/tree/main/runtimes/rust), [Go](https://github.com/twilic/twilic/tree/main/runtimes/go), and [Zig](https://github.com/twilic/twilic/tree/main/runtimes/zig) reference implementations.
 
 See [`docs/SPEC-TEST-TRACEABILITY.md`](docs/SPEC-TEST-TRACEABILITY.md) for the spec-section to test mapping.
 

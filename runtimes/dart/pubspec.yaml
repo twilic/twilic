@@ -1,7 +1,7 @@
 name: twilic
 description: Native Dart port of Twilic v2 wire format and session codec.
 version: 0.1.0
-repository: https://github.com/twilic/twilic-dart
+repository: https://github.com/twilic/twilic/tree/main/runtimes/dart
 
 environment:
   sdk: ^3.5.0

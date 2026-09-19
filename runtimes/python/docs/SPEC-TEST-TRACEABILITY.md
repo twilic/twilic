@@ -1,6 +1,6 @@
 # SPEC Test Traceability (5/6/8/10/13/15/18)
 
-This file maps `twilic/SPEC.md` requirements to Python tests in `twilic-python`.
+This file maps `twilic/SPEC.md` requirements to Python tests in `runtimes/python`.
 
 ## 5. Dynamic Profile
 

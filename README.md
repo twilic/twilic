@@ -36,7 +36,7 @@ The etymology follows [Merriam-Webster](https://www.merriam-webster.com/dictiona
 twilic/
 ├ README.md, LICENSE, CONTRIBUTING.md
 ├ SPEC.md
-├ docs/                    # format, encoding, and transport documentation
+├ docs/                    # format, encoding, transport, and release documentation
 ├ versions/                # versioned wire profiles
 ├ examples/                # small specification examples
 ├ diagrams/                # protocol and encoding diagrams
@@ -56,9 +56,10 @@ twilic/
 3. `docs/encoding.md` for scalar rules, vector codecs, string modes, and compression.
 4. `docs/transport.md` for session-scoped state and transport assumptions.
 5. `versions/v3.md` for the compact schema-aware interoperability profile.
-6. `examples/` and `diagrams/` for small concrete artifacts.
-7. `conformance/README.md` for shared fixture and CI conventions.
-8. `runtimes/<language>/README.md` for a language-specific API and development guide.
+6. `docs/releases.md` for runtime tag and package publish conventions.
+7. `examples/` and `diagrams/` for small concrete artifacts.
+8. `conformance/README.md` for shared fixture and CI conventions.
+9. `runtimes/<language>/README.md` for a language-specific API and development guide.
 
 ## Reference Profiles
 
@@ -71,7 +72,9 @@ This repository includes profiles in `versions/`.
 
 The repository is versioned as one protocol source tree, but package releases remain independent. Each runtime keeps its own package manifest and release version under `runtimes/<language>/`. A runtime README must state the Twilic specification profile it implements.
 
-The old language-specific repositories remain valid mirrors during the migration. They are intentionally not deleted or made private by this repository change; new cross-runtime work should land here first.
+Release tags use the path-prefixed form `runtimes/<language>/vX.Y.Z` so GitHub Releases and Go nested-module tags stay aligned. See [`docs/releases.md`](docs/releases.md) for registry notes, SwiftPM mirror policy, and the publish flow.
+
+This monorepo is the only canonical source. Language-specific repositories are optional publish adapters for ecosystems that cannot consume a nested package path; they are not alternate development remotes.
 
 ## Outside This Repository
 

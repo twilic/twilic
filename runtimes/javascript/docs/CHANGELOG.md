@@ -113,8 +113,8 @@ Initial public release of the JavaScript and TypeScript bindings for Recurram.
 
 - Corrected the Rust crate path used by the workspace so native builds resolve the bridge crate correctly.
 
-[unreleased]: https://github.com/twilic/twilic-js/compare/v3.1.0...HEAD
-[3.1.0]: https://github.com/twilic/twilic-js/compare/v3.0.0...v3.1.0
-[3.0.0]: https://github.com/twilic/twilic-js/compare/v2.0.0...v3.0.0
-[2.0.0]: https://github.com/twilic/twilic-js/compare/v0.1.0...v2.0.0
-[0.1.0]: https://github.com/twilic/twilic-js/releases/tag/v0.1.0
+[unreleased]: https://github.com/twilic/twilic/compare/runtimes/javascript/v3.1.0...HEAD
+[3.1.0]: https://github.com/twilic/twilic/compare/runtimes/javascript/v3.0.0...runtimes/javascript/v3.1.0
+[3.0.0]: https://github.com/twilic/twilic/compare/runtimes/javascript/v2.0.0...runtimes/javascript/v3.0.0
+[2.0.0]: https://github.com/twilic/twilic/compare/runtimes/javascript/v0.1.0...runtimes/javascript/v2.0.0
+[0.1.0]: https://github.com/twilic/twilic/releases/tag/runtimes/javascript/v0.1.0

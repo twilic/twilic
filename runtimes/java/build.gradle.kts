@@ -64,7 +64,7 @@ publishing {
                 description.set(
                     "Java implementation of a fast, compact binary wire format for modern data transport.",
                 )
-                url.set("https://github.com/twilic/twilic-java")
+                url.set("https://github.com/twilic/twilic/tree/main/runtimes/java")
                 licenses {
                     license {
                         name.set("MIT License")
@@ -78,9 +78,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/twilic/twilic-java.git")
-                    developerConnection.set("scm:git:ssh://github.com:twilic/twilic-java.git")
-                    url.set("https://github.com/twilic/twilic-java")
+                    connection.set("scm:git:git://github.com/twilic/twilic.git")
+                    developerConnection.set("scm:git:ssh://github.com:twilic/twilic.git")
+                    url.set("https://github.com/twilic/twilic/tree/main/runtimes/java")
                 }
             }
         }

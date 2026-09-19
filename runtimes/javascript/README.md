@@ -1,6 +1,6 @@
 # Twilic (JS)
 
-JavaScript/TypeScript bindings for `twilic-rust` with two backends:
+JavaScript/TypeScript bindings for the Rust runtime with two backends:
 
 - Node.js: N-API (`twilic-napi`)
 - Browser/JS runtime: WebAssembly (`twilic-wasm`)
@@ -150,21 +150,21 @@ pnpm pack
 
 GitHub Actions publish uses [npm trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/)—no long-lived `NPM_TOKEN` secret.
 
-One-time setup on [npmjs.com](https://www.npmjs.com/package/@twilic/core): open the package → **Settings** → **Trusted Publisher** → **GitHub Actions**, then set **Organization or user** `twilic`, **Repository** `twilic-js`, and **Workflow filename** `publish-npm.yml` (exact name, including `.yml`). See also [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
+One-time setup on [npmjs.com](https://www.npmjs.com/package/@twilic/core): open the package → **Settings** → **Trusted Publisher** → **GitHub Actions**, then set **Organization or user** `twilic`, **Repository** `twilic`, and **Workflow filename** `publish-npm.yml` (exact name, including `.yml`). See also [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
 
 Release steps:
 
 1. Bump `version` in `package.json`.
-2. Create and push matching tag `v<version>`.
+2. Create and push matching tag `runtimes/javascript/v<version>`.
 
 Example:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag runtimes/javascript/v3.1.0
+git push origin runtimes/javascript/v3.1.0
 ```
 
-The workflow `.github/workflows/publish-npm.yml` verifies tag/version match and then runs `npm publish` (OIDC authentication via `id-token: write`).
+See [`docs/releases.md`](../../docs/releases.md). The publish workflow verifies tag/version match and then runs `npm publish` (OIDC authentication via `id-token: write`).
 
 ## License
 

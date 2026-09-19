@@ -1,6 +1,6 @@
 # SPEC Test Traceability (5/6/8/10/13/15/18)
 
-This file maps `twilic/SPEC.md` requirements to Ruby tests in `twilic-ruby`.
+This file maps `twilic/SPEC.md` requirements to Ruby tests in `runtimes/ruby`.
 
 ## 5. Dynamic Profile
 

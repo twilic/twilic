@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- i64 direct/delta bitpack uses zigzag + u64 bitpacking to match [twilic-rust](https://github.com/twilic/twilic-rust) and PHP reference behavior.
+- i64 direct/delta bitpack uses zigzag + u64 bitpacking to match [runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust) and PHP reference behavior.
 - Map all vector codec wire bytes (0–12) in `vector_codec_atom/1`; decode i64 RLE, delta-for, delta-delta, patched-for, and Simple8B instead of falling through to plain.
 - Rust client interop script uses `scripts/rust-server-fixtures` (local crate) instead of a non-existent path under `twilic-rust`.
 - Protocol decode carries key/string tables across map entries for interop fixtures (e.g. `map_two_fields_second`).
