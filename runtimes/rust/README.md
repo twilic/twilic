@@ -33,14 +33,28 @@ From crates.io (if/when published):
 twilic = "3.1"
 ```
 
-From a checkout of this monorepo:
+From GitHub:
+
+```toml
+[dependencies]
+twilic = { git = "https://github.com/twilic/twilic.git" }
+```
+
+Pin a release tag when needed:
+
+```toml
+[dependencies]
+twilic = { git = "https://github.com/twilic/twilic.git", tag = "runtimes/rust/v3.1.0" }
+```
+
+From a local checkout of this monorepo:
 
 ```toml
 [dependencies]
 twilic = { path = "runtimes/rust" }
 ```
 
-Cargo cannot resolve a nested crate from a remote git URL alone. Prefer crates.io, or depend on a local path after cloning [`twilic/twilic`](https://github.com/twilic/twilic).
+Cargo locates nested crates inside a git repository, so a remote git dependency on [`twilic/twilic`](https://github.com/twilic/twilic) resolves `runtimes/rust` without a language-specific mirror.
 
 ## Quick start
 
