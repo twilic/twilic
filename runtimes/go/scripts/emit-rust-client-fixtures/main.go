@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	twilic "github.com/twilic/twilic/runtimes/go"
+	twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {

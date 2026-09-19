@@ -22,13 +22,13 @@ This module's default `Encode` / `Decode` API targets Twilic v3 (Dynamic Profile
 
 ```text
 runtimes/go/
-  export.go, version.go            # public import path (github.com/twilic/twilic/runtimes/go)
+  export.go, version.go            # public import path (github.com/twilic/twilic/runtimes/go/v3)
   internal/core/                  # wire, model, codec, session, protocol, v2, v3 tests
   scripts/                        # Rust interop fixtures and smoke checks
   docs/
 ```
 
-The package root stays thin: import `github.com/twilic/twilic/runtimes/go` only. Implementation details live under `internal/core/`, similar to `src/` in the Zig crate. Release tags must be `runtimes/go/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)).
+The package root stays thin: import `github.com/twilic/twilic/runtimes/go/v3` only. Implementation details live under `internal/core/`, similar to `src/` in the Zig crate. Release tags must be `runtimes/go/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)).
 
 ## Requirements
 
@@ -37,7 +37,7 @@ The package root stays thin: import `github.com/twilic/twilic/runtimes/go` only.
 ## Install
 
 ```bash
-go get github.com/twilic/twilic/runtimes/go@latest
+go get github.com/twilic/twilic/runtimes/go/v3@latest
 ```
 
 ## Quick start
@@ -48,7 +48,7 @@ package main
 import (
     "fmt"
 
-    twilic "github.com/twilic/twilic/runtimes/go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {
@@ -77,7 +77,7 @@ func main() {
 package main
 
 import (
-    twilic "github.com/twilic/twilic/runtimes/go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {

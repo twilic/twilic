@@ -57,7 +57,7 @@ Version numbers live in each runtime's package manifest. The git tag must match 
 | --- | --- | --- |
 | Rust | crates.io when published; otherwise path checkout of `runtimes/rust` | Cargo git deps need the crate at a discoverable path; prefer crates.io |
 | JavaScript | npm `@twilic/core`; git metadata uses `repository.directory` | Tags: `runtimes/javascript/vX.Y.Z` |
-| Go | module `github.com/twilic/twilic/runtimes/go` | Tags **must** be `runtimes/go/vX.Y.Z` for `go get` |
+| Go | module `github.com/twilic/twilic/runtimes/go/v3` | Major versions require a `/vN` path suffix; tags remain `runtimes/go/vX.Y.Z` |
 | Python | PyPI when published; URLs point at `runtimes/python` | Tags: `runtimes/python/vX.Y.Z` |
 | Java / Kotlin / Scala | Maven coordinates when published; SCM URLs point at this monorepo | Tags: `runtimes/<language>/vX.Y.Z` |
 | Ruby | RubyGems when published; `source_code_uri` points at `runtimes/ruby` | Tags: `runtimes/ruby/vX.Y.Z` |
