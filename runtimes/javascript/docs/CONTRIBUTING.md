@@ -33,9 +33,9 @@ pnpm fmt:check
 pnpm lint
 ```
 
-The monorepo CI builds the local `runtimes/rust` crate directly. The historical `twilic-rust` repository remains available as a release and compatibility mirror while the migration settles.
+The monorepo CI builds the local `runtimes/rust` crate directly.
 
-npm releases use the `npm-publish` GitHub Environment (required reviewers) and only grant `id-token: write` in the minimal publish job after the package tarball is built.
+Release tags use `runtimes/javascript/vX.Y.Z` (see [`docs/releases.md`](../../../docs/releases.md)). Automated npm publish via `.github/workflows/publish-npm.yml` is not restored yet; do not point npm Trusted Publisher at this repository until that workflow exists.
 
 ## Commit Messages
 

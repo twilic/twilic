@@ -10,14 +10,15 @@
     "typescript",
     "wasm"
   ],
-  "homepage": "https://github.com/twilic/twilic-js#readme",
+  "homepage": "https://github.com/twilic/twilic/tree/main/runtimes/javascript#readme",
   "bugs": {
-    "url": "https://github.com/twilic/twilic-js/issues"
+    "url": "https://github.com/twilic/twilic/issues"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/twilic/twilic-js.git"
+    "url": "git+https://github.com/twilic/twilic.git",
+    "directory": "runtimes/javascript"
   },
   "files": [
     "dist",

@@ -22,7 +22,7 @@ uv run ruff check .
 uv run pytest
 ```
 
-Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as [twilic/twilic-go](https://github.com/twilic/twilic-go)):
+Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as the repository root):
 
 ```bash
 pnpm install

@@ -14,7 +14,7 @@ This library's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-php/
+runtimes/php/
   src/bootstrap.php              # global encode/decode helpers
   src/Twilic/                    # wire, model, codec, session, v2
   tests/
@@ -98,7 +98,7 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 
 ## Spec parity
 
-This library mirrors the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and tracks [twilic-python](https://github.com/twilic/twilic-python) and [twilic-java](https://github.com/twilic/twilic-java).
+This library implements the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and tracks [runtimes/python](https://github.com/twilic/twilic/tree/main/runtimes/python) and [runtimes/java](https://github.com/twilic/twilic/tree/main/runtimes/java).
 
 ## License
 

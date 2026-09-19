@@ -4,6 +4,9 @@ version = "3.1.0"
 edition = "2024"
 description = "Twilic: schema-aware wire format with stateful transport."
 license = "MIT"
+repository = "https://github.com/twilic/twilic"
+homepage = "https://github.com/twilic/twilic/tree/main/runtimes/rust"
+documentation = "https://docs.rs/twilic"
 
 [dependencies]
 ahash = "0.8"

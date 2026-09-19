@@ -36,6 +36,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Project version bumped to `2.0.0` for alignment with the Recurram v2 release line.
 - Documentation updated to point to the v2 active specification profile.
-
-[3.0.0]: https://github.com/twilic/twilic-zig/releases/tag/v3.0.0
-[2.0.0]: https://github.com/twilic/twilic-zig/releases/tag/v2.0.0

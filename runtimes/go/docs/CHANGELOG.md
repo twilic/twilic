@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Go module path moved to `github.com/twilic/twilic/runtimes/go/v3`.
+
 ## [3.1.0] - 2026-07-19
 
 ### Added
@@ -45,7 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [3.0.0] - 2026-05-22
 
-Initial public release of the Go implementation of Twilic, tracking the v3 release line shared with [twilic-rust](https://github.com/twilic/twilic-rust) and [twilic-js](https://github.com/twilic/twilic-js).
+Initial public release of the Go implementation of Twilic, tracking the v3 release line shared with [runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust) and [runtimes/javascript](https://github.com/twilic/twilic/tree/main/runtimes/javascript).
 
 ### Added
 
@@ -64,7 +68,3 @@ Initial public release of the Go implementation of Twilic, tracking the v3 relea
 - Align literal key encoding with twilic-rust so first map fields are not written as unresolved key refs.
 - Register shapes on decode after repeated map observations, matching twilic-rust session behavior.
 - Skip Rust-dependent interop Go tests when `twilic-rust` is not checked out (fixes CI on the default workflow).
-
-[unreleased]: https://github.com/twilic/twilic-go/compare/v3.1.0...HEAD
-[3.1.0]: https://github.com/twilic/twilic-go/compare/v3.0.0...v3.1.0
-[3.0.0]: https://github.com/twilic/twilic-go/releases/tag/v3.0.0

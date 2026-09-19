@@ -14,7 +14,7 @@ This library's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-cpp/
+runtimes/cpp/
   include/twilic/         # public headers
   src/                    # implementation
   test/
@@ -57,7 +57,7 @@ See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 
 ## Spec parity
 
-Mirrors [twilic/twilic](https://github.com/twilic/twilic); references [twilic-dart](https://github.com/twilic/twilic-dart).
+Lives in [twilic/twilic](https://github.com/twilic/twilic); references [runtimes/dart](https://github.com/twilic/twilic/tree/main/runtimes/dart).
 
 ## License
 

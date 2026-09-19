@@ -105,4 +105,8 @@ After `pnpm install`, Husky runs Commitlint on each local commit. Pull requests 
 - The affected runtime's local tests pass through `bash conformance/run.sh <language>`.
 - Spec, conformance, and testdata changes are reviewed as one interoperability change.
 
-By contributing to this repository, you agree that your contribution may be distributed under the `CC-BY-4.0` license used by the project.
+## Licensing Of Contributions
+
+Contributions to specification and documentation files outside `runtimes/` are licensed under `CC-BY-4.0`.
+
+Contributions under `runtimes/` are licensed under the MIT License applicable to that runtime.

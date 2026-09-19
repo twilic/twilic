@@ -7,7 +7,7 @@ This module's default `Twilic.encode` / `Twilic.decode` API targets Twilic v2 (v
 ## Project layout
 
 ```text
-twilic-lua/
+runtimes/lua/
   src/twilic/init.lua       # public API
   src/twilic/core/          # wire, model, codec, session, protocol, v2
   spec/                     # busted tests (ported from twilic-ruby)
@@ -22,8 +22,10 @@ twilic-lua/
 
 ## Install (LuaRocks)
 
+From a checkout of `runtimes/lua` (no monorepo release tag yet):
+
 ```bash
-luarocks install twilic-3.0.0-1.rockspec
+luarocks make twilic-3.0.0-1.rockspec
 ```
 
 Or use the tree directly by setting `LUA_PATH`:

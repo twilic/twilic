@@ -26,13 +26,6 @@ This crate's default `encode` / `decode` API targets Twilic v3 (Dynamic Profile)
 
 Add one of the following to `Cargo.toml`.
 
-From GitHub:
-
-```toml
-[dependencies]
-twilic = { git = "https://github.com/twilic/twilic-rust.git" }
-```
-
 From crates.io (if/when published):
 
 ```toml
@@ -40,12 +33,28 @@ From crates.io (if/when published):
 twilic = "3.1"
 ```
 
-From this monorepo:
+From GitHub:
 
 ```toml
 [dependencies]
-twilic = { path = "./runtimes/rust" }
+twilic = { git = "https://github.com/twilic/twilic.git" }
 ```
+
+Pin a release tag when needed:
+
+```toml
+[dependencies]
+twilic = { git = "https://github.com/twilic/twilic.git", tag = "runtimes/rust/v3.1.0" }
+```
+
+From a local checkout of this monorepo:
+
+```toml
+[dependencies]
+twilic = { path = "runtimes/rust" }
+```
+
+Cargo locates nested crates inside a git repository, so a remote git dependency on [`twilic/twilic`](https://github.com/twilic/twilic) resolves `runtimes/rust` without a language-specific mirror.
 
 ## Quick start
 
@@ -94,20 +103,22 @@ cargo test
 
 ## Release (GitHub Actions)
 
-Publishing to crates.io is automated by `.github/workflows/publish-crates.yml`.
+Publishing to crates.io is automated by `.github/workflows/publish-crates.yml` when that workflow is present.
 
 Setup:
 
 1. Add repository secret `CARGO_REGISTRY_TOKEN` (crates.io API token).
 2. Bump `version` in `Cargo.toml`.
-3. Create and push a matching tag: `v<version>`.
+3. Create and push a matching tag: `runtimes/rust/v<version>`.
 
 Example:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag runtimes/rust/v3.1.0
+git push origin runtimes/rust/v3.1.0
 ```
+
+See [`docs/releases.md`](../../docs/releases.md) for the monorepo tag scheme.
 
 ## License
 

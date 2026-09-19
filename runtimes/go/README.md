@@ -21,14 +21,14 @@ This module's default `Encode` / `Decode` API targets Twilic v3 (Dynamic Profile
 ## Project layout
 
 ```text
-twilic-go/
-  export.go, version.go            # public import path (github.com/twilic/twilic-go)
+runtimes/go/
+  export.go, version.go            # public import path (github.com/twilic/twilic/runtimes/go/v3)
   internal/core/                  # wire, model, codec, session, protocol, v2, v3 tests
   scripts/                        # Rust interop fixtures and smoke checks
   docs/
 ```
 
-The repository root stays thin: import `github.com/twilic/twilic-go` only. Implementation details live under `internal/core/`, similar to `src/` in the Zig crate.
+The package root stays thin: import `github.com/twilic/twilic/runtimes/go/v3` only. Implementation details live under `internal/core/`, similar to `src/` in the Zig crate. Release tags must be `runtimes/go/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)).
 
 ## Requirements
 
@@ -37,7 +37,7 @@ The repository root stays thin: import `github.com/twilic/twilic-go` only. Imple
 ## Install
 
 ```bash
-go get github.com/twilic/twilic-go
+go get github.com/twilic/twilic/runtimes/go/v3@latest
 ```
 
 ## Quick start
@@ -48,7 +48,7 @@ package main
 import (
     "fmt"
 
-    twilic "github.com/twilic/twilic-go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {
@@ -77,7 +77,7 @@ func main() {
 package main
 
 import (
-    twilic "github.com/twilic/twilic-go"
+    twilic "github.com/twilic/twilic/runtimes/go/v3"
 )
 
 func main() {
@@ -131,12 +131,11 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 ## CI and release (GitHub Actions)
 
 - CI workflow: `.github/workflows/ci.yml`
-- Interop workflow: `.github/workflows/interop.yml`
-- Release workflow: `.github/workflows/publish-module.yml` (tag `v*` must match `version.go`)
+- Release tags: `runtimes/go/vX.Y.Z` (must match `version.go`; see [`docs/releases.md`](../../docs/releases.md))
 
 ## Spec parity
 
-This module mirrors the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic-rust) and [Zig](https://github.com/twilic/twilic-zig) reference implementations.
+This module implements the Twilic wire format from [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic/tree/main/runtimes/rust) and [Zig](https://github.com/twilic/twilic/tree/main/runtimes/zig) reference implementations.
 
 See [`docs/SPEC-TEST-TRACEABILITY.md`](docs/SPEC-TEST-TRACEABILITY.md) for the spec-section to test mapping.
 

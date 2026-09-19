@@ -14,7 +14,7 @@ This library's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-scala/
+runtimes/scala/
   src/main/scala/io/twilic/           # public Scala API
   src/main/java/io/twilic/internal/  # protocol core (Java, shared with reference SDK)
   src/test/scala/                      # spec conformance and interop tests (ScalaTest)
@@ -118,7 +118,7 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 
 ## Spec parity
 
-This library mirrors the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic-rust), [Java](https://github.com/twilic/twilic-java), and [Python](https://github.com/twilic/twilic-python) reference implementations.
+This library implements the Twilic wire format spec at [twilic/twilic](https://github.com/twilic/twilic) and stays in lockstep with the [Rust](https://github.com/twilic/twilic/tree/main/runtimes/rust), [Java](https://github.com/twilic/twilic/tree/main/runtimes/java), and [Python](https://github.com/twilic/twilic/tree/main/runtimes/python) reference implementations.
 
 See [`docs/SPEC-TEST-TRACEABILITY.md`](docs/SPEC-TEST-TRACEABILITY.md) for the spec-section to test mapping.
 

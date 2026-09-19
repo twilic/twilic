@@ -1,6 +1,6 @@
 # SPEC Test Traceability (4/5/6/8/10/13/15/18)
 
-This file maps `twilic/SPEC.md` requirements to Go tests in `twilic-go`.
+This file maps `twilic/SPEC.md` requirements to Go tests in `runtimes/go`.
 
 ## 4. v3 Wire Model
 

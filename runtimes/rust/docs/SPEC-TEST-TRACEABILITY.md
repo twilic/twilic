@@ -1,6 +1,6 @@
 # SPEC Test Traceability (5/6/8/10/13/15/18)
 
-This file maps `twilic/SPEC.md` requirements to Rust tests in `twilic-rust/tests`.
+This file maps `twilic/SPEC.md` requirements to Rust tests in `runtimes/rust/tests`.
 
 ## 5. Dynamic Profile
 

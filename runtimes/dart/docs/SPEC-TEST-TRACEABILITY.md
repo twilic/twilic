@@ -2,7 +2,7 @@
 
 This file maps [`twilic/SPEC.md`](https://github.com/twilic/twilic/blob/main/SPEC.md) requirements to tests in this repository.
 
-Smoke-level coverage is provided by the tests under `test/` (or `tests/`). For the full conformance matrix, see [`twilic-java/docs/SPEC-TEST-TRACEABILITY.md`](https://github.com/twilic/twilic-java/blob/main/docs/SPEC-TEST-TRACEABILITY.md).
+Smoke-level coverage is provided by the tests under `test/` (or `tests/`). For the full conformance matrix, see [`../../java/docs/SPEC-TEST-TRACEABILITY.md`](../../java/docs/SPEC-TEST-TRACEABILITY.md).
 
 ## Current status
 

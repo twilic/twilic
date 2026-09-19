@@ -4,7 +4,7 @@ C implementation of the Twilic wire format and session-aware encoder/decoder.
 
 This library's default `twilic_encode` / `twilic_decode` API targets Twilic v2 (v3 support pending).
 
-The public API in `include/twilic/twilic.h` is C11. Implementation sources in `src/*.c` are algorithmically aligned with [twilic-cpp](https://github.com/twilic/twilic-cpp) and spec tests with [twilic-go](https://github.com/twilic/twilic-go) `internal/core`. Sources currently compile as C++17 for parity with the reference implementation while the mechanical C11 port (structs, manual memory, no STL) proceeds module by module.
+The public API in `include/twilic/twilic.h` is C11. Implementation sources in `src/*.c` are algorithmically aligned with [runtimes/cpp](https://github.com/twilic/twilic/tree/main/runtimes/cpp) and spec tests with [runtimes/go](https://github.com/twilic/twilic/tree/main/runtimes/go) `internal/core`. Sources currently compile as C++17 for parity with the reference implementation while the mechanical C11 port (structs, manual memory, no STL) proceeds module by module.
 
 ## What this library provides
 
@@ -18,7 +18,7 @@ The public API in `include/twilic/twilic.h` is C11. Implementation sources in `s
 ## Project layout
 
 ```text
-twilic-c/
+runtimes/c/
   include/twilic/         # headers (public twilic.h + internal modules)
   src/                    # wire, errors, model, codec, session, protocol, v2, dictionary, interop_fixtures, twilic.c
   test/                   # spec tests (assert macro harness)
@@ -78,7 +78,7 @@ twilic_buffer_free(&encoded);
 
 ## Spec parity
 
-Mirrors [twilic/twilic](https://github.com/twilic/twilic). Algorithms reference [twilic-cpp](https://github.com/twilic/twilic-cpp); spec tests reference [twilic-go](https://github.com/twilic/twilic-go) `internal/core`.
+Lives in [twilic/twilic](https://github.com/twilic/twilic). Algorithms reference [runtimes/cpp](https://github.com/twilic/twilic/tree/main/runtimes/cpp); spec tests reference [runtimes/go](https://github.com/twilic/twilic/tree/main/runtimes/go) `internal/core`.
 
 ## License
 

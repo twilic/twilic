@@ -14,7 +14,7 @@ This library's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-elixir/
+runtimes/elixir/
   lib/twilic/             # wire, model, codec, session, protocol, v2
   test/
   docs/
@@ -29,7 +29,7 @@ twilic-elixir/
 ```elixir
 def deps do
   [
-    {:twilic, git: "https://github.com/twilic/twilic-elixir.git"}
+    {:twilic, git: "https://github.com/twilic/twilic.git", sparse: "runtimes/elixir"}
   ]
 end
 ```
@@ -64,7 +64,7 @@ See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 
 ## Spec parity
 
-Mirrors [twilic/twilic](https://github.com/twilic/twilic); ported from [twilic-dart](https://github.com/twilic/twilic-dart).
+Lives in [twilic/twilic](https://github.com/twilic/twilic); ported from [runtimes/dart](https://github.com/twilic/twilic/tree/main/runtimes/dart).
 
 ## License
 

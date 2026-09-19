@@ -20,9 +20,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/twilic/twilic-python"
-Repository = "https://github.com/twilic/twilic-python"
-Issues = "https://github.com/twilic/twilic-python/issues"
+Homepage = "https://github.com/twilic/twilic/tree/main/runtimes/python"
+Repository = "https://github.com/twilic/twilic"
+Issues = "https://github.com/twilic/twilic/issues"
 
 [build-system]
 requires = ["hatchling"]

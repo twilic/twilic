@@ -13,7 +13,7 @@ This package's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-swift/
+runtimes/swift/
   Sources/Twilic/         # library sources
   Tests/TwilicTests/      # unit tests
   Package.swift
@@ -27,13 +27,15 @@ twilic-swift/
 
 ## Install
 
-Swift Package Manager:
+SwiftPM requires `Package.swift` at the repository root, so a remote dependency on the monorepo URL does not work today. Use a local path after cloning [`twilic/twilic`](https://github.com/twilic/twilic):
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/twilic/twilic-swift.git", from: "0.1.0"),
+    .package(path: "path/to/twilic/runtimes/swift"),
 ]
 ```
+
+Optional publish mirrors may be added later for remote SwiftPM consumers; see [`docs/releases.md`](../../docs/releases.md).
 
 ## Quick start
 
@@ -67,7 +69,7 @@ See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 
 ## Spec parity
 
-Mirrors [twilic/twilic](https://github.com/twilic/twilic) and [twilic-java](https://github.com/twilic/twilic-java).
+Lives in [twilic/twilic](https://github.com/twilic/twilic) beside [runtimes/java](https://github.com/twilic/twilic/tree/main/runtimes/java).
 
 ## License
 

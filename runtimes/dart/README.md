@@ -14,7 +14,7 @@ This package's default `encode` / `decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-dart/
+runtimes/dart/
   lib/                    # public API (twilic.dart) + lib/src/*
   test/
   tool/
@@ -31,7 +31,8 @@ twilic-dart/
 dependencies:
   twilic:
     git:
-      url: https://github.com/twilic/twilic-dart.git
+      url: https://github.com/twilic/twilic.git
+      path: runtimes/dart
 ```
 
 ## Quick start
@@ -65,7 +66,7 @@ See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) for Prettier and markdownlint
 
 ## Spec parity
 
-Mirrors [twilic/twilic](https://github.com/twilic/twilic) and references [twilic-python](https://github.com/twilic/twilic-python).
+Lives in [twilic/twilic](https://github.com/twilic/twilic) beside [runtimes/python](https://github.com/twilic/twilic/tree/main/runtimes/python).
 
 ## License
 

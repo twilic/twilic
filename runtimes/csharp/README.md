@@ -15,7 +15,7 @@ This library's default `Encode` / `Decode` API targets Twilic v2 (v3 support pen
 ## Project layout
 
 ```text
-twilic-csharp/
+runtimes/csharp/
   src/Twilic/             # public API + Core/*
   tests/
   docs/
@@ -62,7 +62,7 @@ See [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md).
 
 ## Spec parity
 
-Mirrors [twilic/twilic](https://github.com/twilic/twilic) and [twilic-java](https://github.com/twilic/twilic-java).
+Lives in [twilic/twilic](https://github.com/twilic/twilic) and [runtimes/java](https://github.com/twilic/twilic/tree/main/runtimes/java).
 
 ## License
 

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [3.0.0] - 2026-05-24
 
-Initial public release of the Ruby implementation of Twilic, tracking the v3 release line shared with [twilic-rust](https://github.com/twilic/twilic-rust) and [twilic-js](https://github.com/twilic/twilic-js).
+Initial public release of the Ruby implementation of Twilic, tracking the v3 release line shared with [runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust) and [runtimes/javascript](https://github.com/twilic/twilic/tree/main/runtimes/javascript).
 
 ### Added
 
@@ -26,6 +26,3 @@ Initial public release of the Ruby implementation of Twilic, tracking the v3 rel
 ### Fixed
 
 - PR Message Check: skip template validation for Dependabot pull requests.
-
-[unreleased]: https://github.com/twilic/twilic-ruby/compare/v3.0.0...HEAD
-[3.0.0]: https://github.com/twilic/twilic-ruby/releases/tag/v3.0.0
