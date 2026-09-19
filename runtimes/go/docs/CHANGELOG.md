@@ -56,7 +56,7 @@ Initial public release of the Go implementation of Twilic, tracking the v3 relea
 - Core wire format with dynamic `Value` model and `Encode` / `Decode` APIs.
 - Schema-aware encoding (`EncodeWithSchema`), batch encoding (`EncodeBatch`), and session-based micro-batch and patch support.
 - Stateful transport features: base snapshots, state patch encoding, template batch handling, control stream support, and trained dictionary support.
-- Public module API at `github.com/twilic/twilic-go` with implementation under `internal/core/`.
+- Public module API at `github.com/twilic/twilic-go` (standalone repository path at release time) with implementation under `internal/core/`.
 - Spec conformance tests and traceability mapping in [`docs/SPEC-TEST-TRACEABILITY.md`](SPEC-TEST-TRACEABILITY.md).
 - Rust interop fixture stream, value parity tests, and bidirectional smoke scripts under `scripts/`.
 - GitHub Actions workflows for CI, Interop, commitlint, invisible character check, PR message validation, and tagged module publish.

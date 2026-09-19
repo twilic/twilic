@@ -12,7 +12,7 @@ The public API in `include/twilic/twilic.h` is C11. Implementation sources in `s
 - Schema-aware encoding (`twilic_encode_with_schema`)
 - Batch encoding (`twilic_encode_batch`)
 - Value constructors and `twilic_value_free` / `twilic_buffer_free`
-- Spec tests ported from twilic-go (`dynamic_profile`, `bound_batch_stateful`, `codec_spec_vectors`, `control_stream`, `coverage_boost`, `interop_fixtures`)
+- Spec tests ported from [runtimes/go](https://github.com/twilic/twilic/tree/main/runtimes/go) (`dynamic_profile`, `bound_batch_stateful`, `codec_spec_vectors`, `control_stream`, `coverage_boost`, `interop_fixtures`)
 - Cross-language interop fixtures and Rust smoke checks
 
 ## Project layout

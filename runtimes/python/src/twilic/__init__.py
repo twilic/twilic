@@ -1,4 +1,4 @@
-"""Twilic Python — native Pure Python port of twilic-go."""
+"""Twilic Python — native Pure Python port of runtimes/go."""
 
 from __future__ import annotations
 

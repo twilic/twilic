@@ -77,6 +77,6 @@ This file maps `twilic/SPEC.md` requirements to PHPUnit tests in `runtimes/php`.
 
 ## Current Gaps (explicit)
 
-- Coverage-boost tests from `twilic-go` (e.g. `TestCoverageBoost_*`) are not yet ported.
+- Coverage-boost tests from `runtimes/go` (e.g. `TestCoverageBoost_*`) are not yet ported.
 - Optional-only extension note: Section 6.4 (zero-copy layout) is not implemented as a conformance target.
 - Optional-only extension note: Section 10.7 (static dictionary) is not implemented as a conformance target.
