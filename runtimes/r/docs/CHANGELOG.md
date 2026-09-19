@@ -12,22 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [3.0.0] - 2026-05-22
 
-Initial public release of the Go implementation of Twilic, tracking the v3 release line shared with [runtimes/rust](https://github.com/twilic/twilic/tree/main/runtimes/rust) and [runtimes/javascript](https://github.com/twilic/twilic/tree/main/runtimes/javascript).
+Initial public release of the R implementation of Twilic. The default `encode` / `decode` API targets Twilic v2 (v3 support pending), with session protocol coverage and Rust interop fixtures aligned to [runtimes/ruby](https://github.com/twilic/twilic/tree/main/runtimes/ruby).
 
 ### Added
 
-- Core wire format with dynamic `Value` model and `Encode` / `Decode` APIs.
-- Schema-aware encoding (`EncodeWithSchema`), batch encoding (`EncodeBatch`), and session-based micro-batch and patch support.
-- Stateful transport features: base snapshots, state patch encoding, template batch handling, control stream support, and trained dictionary support.
-- Public module API at `github.com/twilic/twilic/runtimes/go` with implementation under `internal/core/`.
-- Spec conformance tests and traceability mapping in [`docs/SPEC-TEST-TRACEABILITY.md`](SPEC-TEST-TRACEABILITY.md).
-- Rust interop fixture stream, value parity tests, and bidirectional smoke scripts under `scripts/`.
-- GitHub Actions workflows for CI, Interop, commitlint, invisible character check, PR message validation, and tagged module publish.
-- GitHub issue templates, pull request template, and contributor documentation.
-- Markdown formatting with Prettier and markdownlint.
-
-### Fixed
-
-- Align literal key encoding with twilic-rust so first map fields are not written as unresolved key refs.
-- Register shapes on decode after repeated map observations, matching twilic-rust session behavior.
-- Skip Rust-dependent interop Go tests when `twilic-rust` is not checked out (fixes CI on the default workflow).
+- Native R package API (`encode`, `decode`, session helpers) with sources under `R/`.
+- V2 wire format, session protocol (patches, batches, control streams, dictionaries), and interop fixtures.
+- Spec tests via testthat and package metadata in `DESCRIPTION`.
+- Contributor documentation and Markdown formatting with Prettier and markdownlint.
