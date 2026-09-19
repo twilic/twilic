@@ -4,8 +4,12 @@ package = "twilic"
 version = "3.0.0-1"
 
 source = {
-  url = "https://github.com/twilic/twilic/archive/refs/tags/runtimes/lua/v3.0.0.tar.gz",
-  dir = "twilic-runtimes-lua-v3.0.0/runtimes/lua",
+  -- No runtimes/lua/v3.0.0 tag exists on twilic/twilic yet. Install from a
+  -- checkout with `luarocks make twilic-3.0.0-1.rockspec`. When the monorepo
+  -- tag is published, switch to the archive URL and dir below.
+  -- url = "https://github.com/twilic/twilic/archive/refs/tags/runtimes/lua/v3.0.0.tar.gz",
+  -- dir = "twilic-runtimes-lua-v3.0.0/runtimes/lua",
+  url = "git+https://github.com/twilic/twilic.git",
 }
 
 description = {

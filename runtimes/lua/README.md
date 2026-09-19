@@ -22,8 +22,10 @@ runtimes/lua/
 
 ## Install (LuaRocks)
 
+From a checkout of `runtimes/lua` (no monorepo release tag yet):
+
 ```bash
-luarocks install twilic-3.0.0-1.rockspec
+luarocks make twilic-3.0.0-1.rockspec
 ```
 
 Or use the tree directly by setting `LUA_PATH`:
