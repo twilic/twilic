@@ -107,8 +107,17 @@ Documentation is formatted and linted with Prettier and markdownlint (see [`docs
 ## CI and release (GitHub Actions)
 
 - CI workflow: `.github/workflows/ci.yml`
-- Interop workflow: `.github/workflows/interop.yml`
-- Release workflow: `.github/workflows/publish-pypi.yml` (tag `v*` must match `pyproject.toml` version)
+- Interop workflow: `.github/workflows/interop.yml` (manual; run `conformance/run.sh --interop`)
+- Release workflow: `.github/workflows/publish-pypi.yml` on `runtimes/python/v*` (OIDC trusted publishing to PyPI; tag must match `pyproject.toml`)
+
+Example:
+
+```bash
+git tag runtimes/python/v3.0.0
+git push origin runtimes/python/v3.0.0
+```
+
+See [`docs/releases.md`](../../docs/releases.md) for the monorepo tag scheme. Configure the PyPI Trusted Publisher for project `twilic` against repository `twilic/twilic`, workflow `publish-pypi.yml`, and environment `pypi-publish`.
 
 ## Spec parity
 

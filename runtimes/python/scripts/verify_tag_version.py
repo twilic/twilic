@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify git tag vX.Y.Z matches pyproject.toml version."""
+"""Verify git tag runtimes/python/vX.Y.Z matches pyproject.toml version."""
 
 from __future__ import annotations
 
@@ -7,6 +7,14 @@ import os
 import sys
 import tomllib
 from pathlib import Path
+
+
+def normalize_tag(tag: str) -> str:
+    prefixes = ("runtimes/python/v", "python/v", "v")
+    for prefix in prefixes:
+        if tag.startswith(prefix):
+            return tag[len(prefix) :]
+    return tag
 
 
 def main() -> None:
@@ -20,7 +28,7 @@ def main() -> None:
         print("tag is required (set GITHUB_REF_NAME or pass tag as arg)", file=sys.stderr)
         sys.exit(1)
 
-    normalized_tag = tag[1:] if tag.startswith("v") else tag
+    normalized_tag = normalize_tag(tag)
     if normalized_tag != version:
         print(
             f"tag/version mismatch: tag={tag} pyproject.toml version={version}",

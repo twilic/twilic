@@ -35,7 +35,7 @@ pnpm lint
 
 The monorepo CI builds the local `runtimes/rust` crate directly.
 
-Release tags use `runtimes/javascript/vX.Y.Z` (see [`docs/releases.md`](../../../docs/releases.md)). Automated npm publish via `.github/workflows/publish-npm.yml` is not restored yet; do not point npm Trusted Publisher at this repository until that workflow exists.
+Release tags use `runtimes/javascript/vX.Y.Z` (see [`docs/releases.md`](../../../docs/releases.md)). Automated npm publish runs via `.github/workflows/publish-npm.yml` (OIDC trusted publishing). Point the npm Trusted Publisher at repository `twilic/twilic`, workflow `publish-npm.yml`, and environment `npm-publish`.
 
 ## Commit Messages
 

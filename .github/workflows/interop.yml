@@ -1,0 +1,187 @@
+name: Interop
+
+on:
+  workflow_dispatch:
+    inputs:
+      runtime:
+        description: "Runtime to check (or all)"
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - rust
+          - go
+          - python
+          - java
+          - c
+          - cpp
+          - csharp
+          - dart
+          - kotlin
+          - lua
+          - php
+          - r
+          - ruby
+          - scala
+          - zig
+          - elixir
+
+permissions:
+  contents: read
+
+concurrency:
+  group: interop-${{ github.event.inputs.runtime }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  select:
+    name: Select runtimes
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+    steps:
+      - name: Build matrix
+        id: select
+        env:
+          RUNTIME: ${{ inputs.runtime }}
+        run: |
+          set -euo pipefail
+          if [ "${RUNTIME}" = "all" ]; then
+            matrix='{"include":[{"runtime":"rust"},{"runtime":"go"},{"runtime":"python"},{"runtime":"java"},{"runtime":"c"},{"runtime":"cpp"},{"runtime":"csharp"},{"runtime":"dart"},{"runtime":"kotlin"},{"runtime":"lua"},{"runtime":"php"},{"runtime":"r"},{"runtime":"ruby"},{"runtime":"scala"},{"runtime":"zig"},{"runtime":"elixir"}]}'
+          else
+            matrix=$(printf '{"include":[{"runtime":"%s"}]}' "${RUNTIME}")
+          fi
+          echo "matrix=${matrix}" >> "${GITHUB_OUTPUT}"
+
+  interop:
+    name: Interop - ${{ matrix.runtime }}
+    needs: select
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.select.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Go
+        if: matrix.runtime == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+
+      - name: Setup uv and Python
+        if: matrix.runtime == 'python'
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python dependencies
+        if: matrix.runtime == 'python'
+        working-directory: runtimes/python
+        run: |
+          uv python install 3.12
+          uv sync --frozen
+
+      - name: Setup JVM
+        if: matrix.runtime == 'java' || matrix.runtime == 'kotlin' || matrix.runtime == 'scala'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Setup sbt
+        if: matrix.runtime == 'scala'
+        uses: sbt/setup-sbt@v1
+
+      - name: Setup .NET
+        if: matrix.runtime == 'csharp'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup Dart
+        if: matrix.runtime == 'dart'
+        uses: dart-lang/setup-dart@v1
+
+      - name: Install Dart dependencies
+        if: matrix.runtime == 'dart'
+        working-directory: runtimes/dart
+        run: dart pub get
+
+      - name: Setup Lua
+        if: matrix.runtime == 'lua'
+        uses: leafo/gh-actions-lua@v10
+        with:
+          luaVersion: "5.4"
+
+      - name: Setup LuaRocks
+        if: matrix.runtime == 'lua'
+        uses: leafo/gh-actions-luarocks@v4
+
+      - name: Install Busted
+        if: matrix.runtime == 'lua'
+        run: luarocks install busted
+
+      - name: Setup PHP
+        if: matrix.runtime == 'php'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          coverage: none
+
+      - name: Install PHP dependencies
+        if: matrix.runtime == 'php'
+        working-directory: runtimes/php
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Setup R
+        if: matrix.runtime == 'r'
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.4"
+
+      - name: Install R dependencies
+        if: matrix.runtime == 'r'
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            testthat
+            pkgload
+            bit64
+
+      - name: Setup Ruby
+        if: matrix.runtime == 'ruby'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: runtimes/ruby
+
+      - name: Setup Zig
+        if: matrix.runtime == 'zig'
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.15.2
+
+      - name: Setup Elixir
+        if: matrix.runtime == 'elixir'
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.19"
+          otp-version: "27"
+
+      - name: Install Elixir dependencies
+        if: matrix.runtime == 'elixir'
+        working-directory: runtimes/elixir
+        run: mix deps.get
+
+      - name: Run interop checks
+        run: bash conformance/run.sh --interop "${{ matrix.runtime }}"

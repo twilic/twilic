@@ -103,11 +103,11 @@ cargo test
 
 ## Release (GitHub Actions)
 
-Publishing to crates.io is automated by `.github/workflows/publish-crates.yml` when that workflow is present.
+Publishing to crates.io is automated by `.github/workflows/publish-crates.yml` on `runtimes/rust/v*` tags.
 
 Setup:
 
-1. Add repository secret `CARGO_REGISTRY_TOKEN` (crates.io API token).
+1. Add repository secret `CARGO_REGISTRY_TOKEN` (crates.io API token) and configure the `crates-publish` environment.
 2. Bump `version` in `Cargo.toml`.
 3. Create and push a matching tag: `runtimes/rust/v<version>`.
 

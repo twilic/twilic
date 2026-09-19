@@ -57,10 +57,10 @@ Version numbers live in each runtime's package manifest. The git tag must match 
 
 | Ecosystem | Install from monorepo | Notes |
 | --- | --- | --- |
-| Rust | crates.io when published; otherwise `git = "https://github.com/twilic/twilic.git"` (nested crate discovery) | Optional `tag = "runtimes/rust/vX.Y.Z"` |
-| JavaScript | npm `@twilic/core`; git metadata uses `repository.directory` | Tags: `runtimes/javascript/vX.Y.Z`; `publish-npm.yml` not yet restored |
+| Rust | crates.io when published; otherwise `git = "https://github.com/twilic/twilic.git"` (nested crate discovery) | Optional `tag = "runtimes/rust/vX.Y.Z"`; workflow `publish-crates.yml` |
+| JavaScript | npm `@twilic/core`; git metadata uses `repository.directory` | Tags: `runtimes/javascript/vX.Y.Z`; workflow `publish-npm.yml` (OIDC + provenance) |
 | Go | module `github.com/twilic/twilic/runtimes/go/v3` | Major versions require a `/vN` path suffix; tags remain `runtimes/go/vX.Y.Z` |
-| Python | PyPI when published; URLs point at `runtimes/python` | Tags: `runtimes/python/vX.Y.Z` |
+| Python | PyPI when published; URLs point at `runtimes/python` | Tags: `runtimes/python/vX.Y.Z`; workflow `publish-pypi.yml` (OIDC) |
 | Java / Kotlin / Scala | Maven coordinates when published; SCM URLs point at this monorepo | Tags: `runtimes/<language>/vX.Y.Z` |
 | Ruby | RubyGems when published; `source_code_uri` points at `runtimes/ruby` | Tags: `runtimes/ruby/vX.Y.Z` |
 | Dart | `git` + `path: runtimes/dart` supported | Tags: `runtimes/dart/vX.Y.Z` |
@@ -76,5 +76,5 @@ Some package managers (notably SwiftPM) cannot consume a nested package path fro
 
 1. Update the version in the runtime manifest and changelog.
 2. Land the change on `main` through the normal review process.
-3. Create and push `runtimes/<language>/vX.Y.Z`.
-4. Run the ecosystem publish workflow (when present) and confirm the GitHub Release.
+3. Create and push `runtimes/<language>/vX.Y.Z` so the matching publish workflow runs.
+4. Confirm the registry publish and the GitHub Release for that tag.

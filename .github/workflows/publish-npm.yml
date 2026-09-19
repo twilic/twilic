@@ -1,0 +1,233 @@
+name: Publish npm
+
+on:
+  push:
+    tags:
+      - "runtimes/javascript/v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (example: runtimes/javascript/v3.1.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-npm-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  parse:
+    name: Parse tag
+    uses: ./.github/workflows/reusable-parse-runtime-tag.yml
+    with:
+      tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      expected_language: javascript
+
+  prepare:
+    name: Verify tag on main
+    needs: parse
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify tag is ancestor of main
+        env:
+          RELEASE_TAG: ${{ needs.parse.outputs.tag }}
+        run: bash tools/ci/verify-tag-on-main.sh "${RELEASE_TAG}"
+
+  build-native:
+    name: Build N-API (${{ matrix.os }})
+    needs: [parse, prepare]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: runtimes/javascript
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.parse.outputs.tag }}
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup pnpm
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        with:
+          version: 11.25.0
+          cache: true
+          cache-dependency-path: runtimes/javascript/pnpm-lock.yaml
+          install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build N-API addon
+        run: pnpm build:napi
+
+      - name: Upload native addon
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.os }}
+          path: runtimes/javascript/native/*.node
+          if-no-files-found: error
+
+  build-package:
+    name: Build TypeScript and WASM
+    needs: [parse, prepare]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: runtimes/javascript
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.parse.outputs.tag }}
+          persist-credentials: false
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          version: v0.13.0
+
+      - name: Setup pnpm
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        with:
+          version: 11.25.0
+          cache: true
+          cache-dependency-path: runtimes/javascript/pnpm-lock.yaml
+          install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify tag and package version
+        env:
+          RELEASE_TAG: ${{ needs.parse.outputs.tag }}
+        run: node ./scripts/verify-tag-version.mjs "${RELEASE_TAG}"
+
+      - name: Build WASM and TypeScript
+        run: |
+          pnpm build:wasm
+          pnpm build:ts
+
+      - name: Upload package sources
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-package
+          path: |
+            runtimes/javascript/package.json
+            runtimes/javascript/README.md
+            runtimes/javascript/LICENSE
+            runtimes/javascript/dist
+            runtimes/javascript/wasm/pkg
+          if-no-files-found: error
+
+  publish:
+    name: Publish to npm
+    needs: [parse, build-native, build-package]
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    permissions:
+      contents: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: runtimes/javascript
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.parse.outputs.tag }}
+          persist-credentials: false
+
+      - name: Download package sources
+        uses: actions/download-artifact@v4
+        with:
+          name: js-package
+          path: .
+
+      - name: Download native addons
+        uses: actions/download-artifact@v4
+        with:
+          pattern: native-*
+          path: /tmp/twilic-native
+          merge-multiple: true
+
+      - name: Assemble native addons
+        run: |
+          set -euo pipefail
+          mkdir -p native
+          find /tmp/twilic-native -type f -name 'twilic_napi-*.node' -exec cp -f {} native/ \;
+          ls -la native
+
+      - name: Setup pnpm
+        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        with:
+          version: 11.25.0
+          cache: true
+          cache-dependency-path: runtimes/javascript/pnpm-lock.yaml
+          install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify pack contents
+        run: pnpm verify:pack
+
+      # Trusted publishing (OIDC): requires npm CLI >= 11.5.1.
+      # Configure @twilic/core on npmjs.com: Settings → Trusted Publisher → GitHub Actions
+      # (organization twilic, repository twilic, workflow file publish-npm.yml, environment npm-publish).
+      - name: Ensure npm CLI for OIDC trusted publishing
+        run: npm install -g "npm@^11.5.1"
+
+      - name: Publish to npm
+        run: npm publish --access public --provenance --ignore-scripts
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.parse.outputs.tag }}
+          RELEASE_TITLE: ${{ needs.parse.outputs.language }} ${{ needs.parse.outputs.version }}
+        run: |
+          set -euo pipefail
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "release ${RELEASE_TAG} already exists"
+            exit 0
+          fi
+          gh release create "${RELEASE_TAG}" \
+            --title "${RELEASE_TITLE}" \
+            --generate-notes \
+            --verify-tag

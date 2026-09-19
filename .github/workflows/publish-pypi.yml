@@ -1,0 +1,98 @@
+name: Publish PyPI
+
+on:
+  push:
+    tags:
+      - "runtimes/python/v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (example: runtimes/python/v3.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-pypi-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  parse:
+    name: Parse tag
+    uses: ./.github/workflows/reusable-parse-runtime-tag.yml
+    with:
+      tag: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+      expected_language: python
+
+  publish:
+    name: Publish to PyPI
+    needs: parse
+    runs-on: ubuntu-latest
+    environment: pypi-publish
+    permissions:
+      contents: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: runtimes/python
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.parse.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify tag is ancestor of main
+        working-directory: ${{ github.workspace }}
+        env:
+          RELEASE_TAG: ${{ needs.parse.outputs.tag }}
+        run: bash tools/ci/verify-tag-on-main.sh "${RELEASE_TAG}"
+
+      - name: Setup uv and Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install Python
+        run: |
+          uv python install 3.12
+          uv sync --frozen
+
+      - name: Verify tag and package version
+        env:
+          RELEASE_TAG: ${{ needs.parse.outputs.tag }}
+        run: uv run python scripts/verify_tag_version.py "${RELEASE_TAG}"
+
+      - name: Test
+        run: uv run pytest
+
+      - name: Build distributions
+        run: uv build
+
+      # Trusted publishing (OIDC): configure the twilic project on pypi.org
+      # (Publisher: GitHub, owner twilic, repository twilic, workflow publish-pypi.yml,
+      #  environment pypi-publish).
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: runtimes/python/dist
+
+      - name: Create GitHub Release
+        working-directory: ${{ github.workspace }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.parse.outputs.tag }}
+          RELEASE_TITLE: ${{ needs.parse.outputs.language }} ${{ needs.parse.outputs.version }}
+        run: |
+          set -euo pipefail
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "release ${RELEASE_TAG} already exists"
+            exit 0
+          fi
+          gh release create "${RELEASE_TAG}" \
+            --title "${RELEASE_TITLE}" \
+            --generate-notes \
+            --verify-tag

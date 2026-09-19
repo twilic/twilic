@@ -155,9 +155,9 @@ git tag runtimes/javascript/v3.1.0
 git push origin runtimes/javascript/v3.1.0
 ```
 
-Automated npm publish is not wired in this monorepo yet. `.github/workflows/publish-npm.yml` is still missing, so do not configure npm Trusted Publisher against `twilic/twilic` until that workflow lands. Until then, publish manually from a built package after verifying `pnpm pack`, or wait for the publish workflow to be restored from the former `twilic-js` automation.
+Automated npm publish runs via `.github/workflows/publish-npm.yml` on `runtimes/javascript/v*` tags (OIDC trusted publishing with provenance). Configure the npm Trusted Publisher for `@twilic/core` against Organization `twilic`, Repository `twilic`, Workflow filename `publish-npm.yml`, and Environment `npm-publish`. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) and [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
 
-When `publish-npm.yml` is added, prefer [npm trusted publishing (OIDC)](https://docs.npmjs.com/trusted-publishers/) with Organization `twilic`, Repository `twilic`, and Workflow filename `publish-npm.yml`. See also [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).
+The workflow builds N-API addons on Linux, macOS, and Windows, builds WASM + TypeScript once, then publishes with `npm publish --access public --provenance --ignore-scripts`.
 
 ## License
 

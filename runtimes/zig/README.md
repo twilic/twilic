@@ -92,21 +92,19 @@ Note: these scripts use the sibling `../rust` runtime in this monorepo.
 - CI workflow: `.github/workflows/ci.yml`
   - `zig fmt --check`
   - `zig build test`
-- Release workflow: `.github/workflows/publish-release.yml`
-  - Triggers on `v*` tags or manual dispatch
-  - Verifies tag/version match against `build.zig.zon`
-  - Re-runs checks and publishes a GitHub Release
+
+Release tags use `runtimes/zig/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)). Zig has no package registry publish step yet; create a GitHub Release for the tag after checks pass.
 
 Release steps:
 
 1. Bump `.version` in `build.zig.zon`.
-2. Create and push matching tag `v<version>`.
+2. Create and push matching tag `runtimes/zig/v<version>`.
 
 Example:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag runtimes/zig/v3.0.0
+git push origin runtimes/zig/v3.0.0
 ```
 
 ## License

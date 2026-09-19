@@ -1,0 +1,58 @@
+name: Parse runtime tag
+
+on:
+  workflow_call:
+    inputs:
+      tag:
+        description: Runtime release tag (runtimes/<language>/vX.Y.Z)
+        required: true
+        type: string
+      expected_language:
+        description: Optional language directory that the tag must match
+        required: false
+        type: string
+        default: ""
+    outputs:
+      tag:
+        description: Normalized release tag
+        value: ${{ jobs.parse.outputs.tag }}
+      language:
+        description: Runtime language directory name
+        value: ${{ jobs.parse.outputs.language }}
+      version:
+        description: Semver without the leading v
+        value: ${{ jobs.parse.outputs.version }}
+      runtime_dir:
+        description: Path under the repository root
+        value: ${{ jobs.parse.outputs.runtime_dir }}
+
+permissions:
+  contents: read
+
+jobs:
+  parse:
+    name: Parse tag
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.parse.outputs.tag }}
+      language: ${{ steps.parse.outputs.language }}
+      version: ${{ steps.parse.outputs.version }}
+      runtime_dir: ${{ steps.parse.outputs.runtime_dir }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Parse runtime tag
+        id: parse
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          EXPECTED_LANGUAGE: ${{ inputs.expected_language }}
+        run: |
+          set -euo pipefail
+          args=("${RELEASE_TAG}")
+          if [ -n "${EXPECTED_LANGUAGE}" ]; then
+            args+=("${EXPECTED_LANGUAGE}")
+          fi
+          bash tools/ci/parse-runtime-tag.sh "${args[@]}"
