@@ -126,7 +126,7 @@ jobs:
       - name: Verify tag and package version
         env:
           RELEASE_TAG: ${{ needs.parse.outputs.tag }}
-        run: node ./scripts/verify-tag-version.mjs "${RELEASE_TAG}"
+        run: env -u GITHUB_REF_NAME node ./scripts/verify-tag-version.mjs "${RELEASE_TAG}"
 
       - name: Build WASM and TypeScript
         run: |
