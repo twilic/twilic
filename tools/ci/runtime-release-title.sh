@@ -4,7 +4,7 @@
 # Usage:
 #   bash tools/ci/runtime-release-title.sh <tag>
 #
-# Example: runtimes/javascript/v3.2.0 -> JavaScript (v3.2.0)
+# Example: runtimes/javascript/v3.2.0 -> JavaScript v3.2.0
 set -euo pipefail
 
 tag="${1:-}"
@@ -47,4 +47,4 @@ case "${language}" in
     ;;
 esac
 
-printf '%s (v%s)\n' "${display_name}" "${version}"
+printf '%s v%s\n' "${display_name}" "${version}"
