@@ -33,7 +33,7 @@ Do not publish unprefixed tags such as `v3.1.0` for runtime packages. Unprefixed
 
 ## GitHub Releases
 
-Each runtime tag SHOULD create a GitHub Release on `twilic/twilic` whose title names the runtime and version, for example `javascript 3.1.0`. Release notes come from that runtime's `docs/CHANGELOG.md` (or equivalent) for the tagged version.
+Each runtime tag SHOULD create a GitHub Release on `twilic/twilic` whose title names the runtime and version, for example `javascript 3.1.0`. Publish workflows copy that version's section from `runtimes/<language>/docs/CHANGELOG.md` into the release notes. Workflow `refresh-release-notes.yml` rewrites the latest releases from those changelogs; it defaults to 10.
 
 Do not link changelog footers to `releases/tag/runtimes/...` or `compare/runtimes/...` until those tags exist on this repository. Historical package versions from before the monorepo may lack matching tags; version headings in each changelog remain authoritative.
 

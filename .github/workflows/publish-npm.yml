@@ -215,13 +215,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.parse.outputs.tag }}
           RELEASE_TITLE: ${{ needs.parse.outputs.language }} ${{ needs.parse.outputs.version }}
-        run: |
-          set -euo pipefail
-          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
-            echo "release ${RELEASE_TAG} already exists"
-            exit 0
-          fi
-          gh release create "${RELEASE_TAG}" \
-            --title "${RELEASE_TITLE}" \
-            --generate-notes \
-            --verify-tag
+        working-directory: ${{ github.workspace }}
+        run: bash tools/ci/create-github-release.sh "${RELEASE_TAG}" "${RELEASE_TITLE}"

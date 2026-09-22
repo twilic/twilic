@@ -1,0 +1,29 @@
+name: Refresh release notes
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Number of latest GitHub releases to refresh from CHANGELOG.md"
+        required: false
+        default: "10"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    name: Refresh latest releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Update release notes from changelogs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_LIMIT: ${{ inputs.limit }}
+        run: bash tools/ci/refresh-release-notes.sh "${RELEASE_LIMIT}"
