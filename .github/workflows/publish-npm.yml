@@ -64,12 +64,10 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Setup pnpm
-        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        uses: pnpm/action-setup@v4
         with:
-          working-directory: runtimes/javascript
-          cache: true
-          cache-dependency-path: runtimes/javascript/pnpm-lock.yaml
-          install: false
+          version: 11.25.0
+          package_json_file: runtimes/javascript/package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -112,12 +110,10 @@ jobs:
           version: v0.13.0
 
       - name: Setup pnpm
-        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        uses: pnpm/action-setup@v4
         with:
-          working-directory: runtimes/javascript
-          cache: true
-          cache-dependency-path: runtimes/javascript/pnpm-lock.yaml
-          install: false
+          version: 11.25.0
+          package_json_file: runtimes/javascript/package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -188,12 +184,10 @@ jobs:
           ls -la native
 
       - name: Setup pnpm
-        uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        uses: pnpm/action-setup@v4
         with:
-          working-directory: runtimes/javascript
-          cache: true
-          cache-dependency-path: runtimes/javascript/pnpm-lock.yaml
-          install: false
+          version: 11.25.0
+          package_json_file: runtimes/javascript/package.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
