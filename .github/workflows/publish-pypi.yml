@@ -85,5 +85,4 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ needs.parse.outputs.tag }}
-          RELEASE_TITLE: ${{ needs.parse.outputs.language }} ${{ needs.parse.outputs.version }}
-        run: bash tools/ci/create-github-release.sh "${RELEASE_TAG}" "${RELEASE_TITLE}"
+        run: bash tools/ci/create-github-release.sh "${RELEASE_TAG}"

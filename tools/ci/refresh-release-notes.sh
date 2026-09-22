@@ -35,7 +35,8 @@ while IFS= read -r tag; do
     exit 1
   fi
 
-  printf 'update %s from %s\n' "${tag}" "runtimes/${language}/docs/CHANGELOG.md"
-  gh release edit "${tag}" --notes-file "${notes_file}"
+  title="$(bash "${script_dir}/runtime-release-title.sh" "${tag}")"
+  printf 'update %s as %s from %s\n' "${tag}" "${title}" "runtimes/${language}/docs/CHANGELOG.md"
+  gh release edit "${tag}" --title "${title}" --notes-file "${notes_file}"
   rm -f "${notes_file}"
 done <<< "${tags}"
