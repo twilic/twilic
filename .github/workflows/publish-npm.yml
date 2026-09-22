@@ -167,7 +167,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: js-package
-          path: .
+          path: runtimes/javascript
 
       - name: Download native addons
         uses: actions/download-artifact@v4
