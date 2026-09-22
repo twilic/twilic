@@ -822,7 +822,7 @@ Inversion does not reduce raw bitmap byte count by itself; prefer it when it imp
 
 In stateful mode, encoder/decoder share session state.
 
-Stateful mode requires a transport/profile that defines exact wire forms for state references, patch opcodes, reset controls, dictionary ids, and retention rules. The v3 reference interoperability profile is stateless unless such a profile is explicitly negotiated.
+Stateful mode requires a transport/profile that defines exact wire forms for state references, patch opcodes, reset controls, dictionary ids, and retention rules. The v3 reference interoperability profile is stateless unless such a profile is explicitly negotiated. One such profile is the Twilic WebSocket Stateful Profile defined in `docs/transport.md`.
 
 State may include at least:
 
@@ -994,11 +994,16 @@ Implementations of this specification are recommended to provide at least these 
 
 ```ts
 encode(value);
+decode(bytes);
+
 encodeWithSchema(schema, value);
 encodeBoundStream(schema, values, options?);
+
 encodeBatchWithSchema(schema, values);
 encodeBatch(shapeOrSchema, values);
+
 createSessionEncoder(options);
+createSessionDecoder(options);
 ```
 
 ### 16.1 contractless mode
@@ -1048,6 +1053,29 @@ enc.reset();
 ```
 
 The session encoder may automatically choose stateless or stateful mode based on previous-message similarity, recent base/template, and dictionary state.
+
+### 16.5 session decoder mode
+
+`createSessionDecoder(options)` returns a decoder that maintains state required by Stateful Profile messages.
+
+Typical API:
+
+```ts
+const dec = createSessionDecoder({
+  maxBaseSnapshots: 8,
+});
+
+dec.decode(bytes);
+dec.reset();
+```
+
+The session decoder maintains state independently for each session. Decoding a stateful message updates the decoder state used by subsequent messages. `reset()` invalidates session-local snapshots, templates, dictionaries, and previous-message state.
+
+`decode(bytes)` returns the application value for a full message, or the reconstructed value after applying a `STATE_PATCH`. Control messages such as `RESET_STATE` invalidate decoder state and MUST NOT be returned as application values.
+
+Session encoders and session decoders are separate objects. Their states stay aligned only by processing the same ordered byte sequence. On a bidirectional connection, outbound encode state and inbound decode state MUST remain independent.
+
+If decoding fails, decoder state MUST NOT partially advance.
 
 ---
 

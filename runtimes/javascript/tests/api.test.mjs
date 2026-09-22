@@ -12,6 +12,7 @@ import { encodeFast, tryDecodeFast } from "../dist/fast-codec.js";
 import {
   DEFAULT_MAX_DECODE_DEPTH,
   TwilicDecodeError,
+  createSessionDecoder,
   createSessionEncoder,
   decode,
   encode,
@@ -204,6 +205,24 @@ test("supports session encoder APIs", async () => {
   session.reset();
   const afterReset = session.encode({ id: 9n, role: "owner" });
   assert.ok(afterReset.length > 0);
+});
+
+test("supports session decoder patch roundtrip", async () => {
+  const enc = createSessionEncoder();
+  const dec = createSessionDecoder();
+
+  const base = { x: 100n, y: 200n, hp: 100n };
+  const next = { x: 101n, y: 200n, hp: 100n };
+
+  const full = enc.encode(base);
+  assert.deepEqual(dec.decode(full), base);
+
+  const patch = enc.encodePatch(next);
+  assert.equal(patch[0], 0x0a);
+  assert.deepEqual(dec.decode(patch), next);
+
+  dec.reset();
+  assert.throws(() => dec.decode(patch));
 });
 
 test("supports advanced session encoder APIs", async () => {

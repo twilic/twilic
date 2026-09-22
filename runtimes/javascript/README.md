@@ -56,6 +56,7 @@ import {
   encode,
   decode,
   createSessionEncoder,
+  createSessionDecoder,
   type TwilicValue,
 } from "@twilic/core";
 
@@ -71,6 +72,10 @@ const roundtrip = decode(bytes);
 const session = createSessionEncoder();
 const first = session.encode(value);
 const patch = session.encodePatch({ ...value, name: "alicia" });
+
+const decoder = createSessionDecoder();
+decoder.decode(first);
+decoder.decode(patch);
 ```
 
 Node.js picks the N-API backend automatically on first use. The default APIs already use the fastest benchmarked path for each operation, so you should not need to choose between transport JSON, compact JSON, or direct object modes.
@@ -151,8 +156,8 @@ pnpm pack
 Release tags use `runtimes/javascript/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)):
 
 ```bash
-git tag runtimes/javascript/v3.1.0
-git push origin runtimes/javascript/v3.1.0
+git tag runtimes/javascript/v3.2.0
+git push origin runtimes/javascript/v3.2.0
 ```
 
 Automated npm publish runs via `.github/workflows/publish-npm.yml` on `runtimes/javascript/v*` tags (OIDC trusted publishing with provenance). Configure the npm Trusted Publisher for `@twilic/core` against Organization `twilic`, Repository `twilic`, Workflow filename `publish-npm.yml`, and Environment `npm-publish`. See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/) and [GitHub Actions OIDC](https://docs.github.com/en/actions/concepts/security/openid-connect).

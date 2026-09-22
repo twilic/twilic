@@ -30,7 +30,7 @@ From crates.io (if/when published):
 
 ```toml
 [dependencies]
-twilic = "3.1"
+twilic = "3.2"
 ```
 
 From GitHub:
@@ -44,7 +44,7 @@ Pin a release tag when needed:
 
 ```toml
 [dependencies]
-twilic = { git = "https://github.com/twilic/twilic.git", tag = "runtimes/rust/v3.1.0" }
+twilic = { git = "https://github.com/twilic/twilic.git", tag = "runtimes/rust/v3.2.0" }
 ```
 
 From a local checkout of this monorepo:
@@ -114,8 +114,8 @@ Setup:
 Example:
 
 ```bash
-git tag runtimes/rust/v3.1.0
-git push origin runtimes/rust/v3.1.0
+git tag runtimes/rust/v3.2.0
+git push origin runtimes/rust/v3.2.0
 ```
 
 See [`docs/releases.md`](../../docs/releases.md) for the monorepo tag scheme.

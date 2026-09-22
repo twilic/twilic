@@ -9,7 +9,7 @@ pub mod wire;
 
 pub use error::{Result, TwilicError};
 pub use model::{Message, Schema, Value};
-pub use protocol::{SessionEncoder, TwilicCodec};
+pub use protocol::{SessionDecoder, SessionEncoder, TwilicCodec};
 pub use session::{SessionOptions, UnknownReferencePolicy};
 pub use wire::{DEFAULT_MAX_DECODE_COUNT, DEFAULT_MAX_DECODE_OUTPUT_RATIO};
 
@@ -39,6 +39,10 @@ pub fn encode_batch_with_schema(schema: &Schema, values: &[Value]) -> Result<Vec
 
 pub fn create_session_encoder(options: SessionOptions) -> SessionEncoder {
     SessionEncoder::new(options)
+}
+
+pub fn create_session_decoder(options: SessionOptions) -> SessionDecoder {
+    SessionDecoder::new(options)
 }
 
 #[cfg(test)]
@@ -235,6 +239,105 @@ mod tests {
             .encode_micro_batch(&[base.clone(), next.clone(), base.clone(), next.clone()])
             .expect("encode micro");
         assert!(!micro.is_empty());
+    }
+
+    #[test]
+    fn session_decoder_reconstructs_state_patch() {
+        let mut enc = create_session_encoder(SessionOptions::default());
+        let mut dec = create_session_decoder(SessionOptions::default());
+        let base = Value::Map(vec![
+            ("x".to_string(), Value::I64(100)),
+            ("y".to_string(), Value::I64(200)),
+            ("hp".to_string(), Value::I64(100)),
+        ]);
+        let next = Value::Map(vec![
+            ("x".to_string(), Value::I64(101)),
+            ("y".to_string(), Value::I64(200)),
+            ("hp".to_string(), Value::I64(100)),
+        ]);
+
+        let full = enc.encode(&base).expect("encode full");
+        assert_eq!(dec.decode(&full).expect("decode full"), base);
+
+        let patch = enc.encode_patch(&next).expect("encode patch");
+        assert_eq!(
+            patch[0],
+            crate::model::MessageKind::StatePatch as u8,
+            "expected STATE_PATCH wire kind"
+        );
+        assert_eq!(dec.decode(&patch).expect("decode patch"), next);
+    }
+
+    #[test]
+    fn session_decoder_reset_rejects_orphan_patch() {
+        let mut enc = create_session_encoder(SessionOptions::default());
+        let mut dec = create_session_decoder(SessionOptions::default());
+        let base = Value::Map(vec![
+            ("x".to_string(), Value::I64(1)),
+            ("y".to_string(), Value::I64(2)),
+            ("hp".to_string(), Value::I64(100)),
+        ]);
+        let next = Value::Map(vec![
+            ("x".to_string(), Value::I64(3)),
+            ("y".to_string(), Value::I64(2)),
+            ("hp".to_string(), Value::I64(100)),
+        ]);
+
+        let full = enc.encode(&base).expect("encode full");
+        dec.decode(&full).expect("decode full");
+        let patch = enc.encode_patch(&next).expect("encode patch");
+        assert_eq!(patch[0], crate::model::MessageKind::StatePatch as u8);
+
+        dec.reset();
+        let err = dec.decode(&patch).expect_err("patch after reset must fail");
+        assert!(
+            err.to_string().contains("unknown reference")
+                || err.to_string().contains("previous_message")
+                || err.to_string().contains("stateless retry")
+        );
+
+        // Failed decode must not advance decoder state into a reconstructable patch baseline.
+        let err_again = dec
+            .decode(&patch)
+            .expect_err("second orphan patch must still fail");
+        assert!(
+            err_again.to_string().contains("unknown reference")
+                || err_again.to_string().contains("previous_message")
+                || err_again.to_string().contains("stateless retry")
+        );
+    }
+
+    #[test]
+    fn session_encoder_and_decoder_do_not_share_state() {
+        let mut enc = create_session_encoder(SessionOptions::default());
+        let mut dec = create_session_decoder(SessionOptions::default());
+        let base = Value::Map(vec![
+            ("n".to_string(), Value::I64(1)),
+            ("x".to_string(), Value::I64(10)),
+            ("y".to_string(), Value::I64(20)),
+        ]);
+        let next = Value::Map(vec![
+            ("n".to_string(), Value::I64(2)),
+            ("x".to_string(), Value::I64(10)),
+            ("y".to_string(), Value::I64(20)),
+        ]);
+
+        let full = enc.encode(&base).expect("encode full");
+        let patch = enc.encode_patch(&next).expect("encode patch");
+        assert_eq!(patch[0], crate::model::MessageKind::StatePatch as u8);
+
+        // Decoder never saw the full frame, so the patch cannot apply.
+        let err = dec
+            .decode(&patch)
+            .expect_err("decoder without baseline must reject patch");
+        assert!(
+            err.to_string().contains("unknown reference")
+                || err.to_string().contains("previous_message")
+                || err.to_string().contains("stateless retry")
+        );
+
+        // Encoder still has its own session state; decoder can still take a full frame.
+        assert_eq!(dec.decode(&full).expect("decode full alone"), base);
     }
 
     #[test]

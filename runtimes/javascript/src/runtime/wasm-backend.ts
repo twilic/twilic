@@ -1,6 +1,7 @@
 import type { WasmInput } from "../types.js";
 import type {
   RuntimeBackend,
+  RuntimeSessionDecoder,
   RuntimeSessionEncoder,
   TransportValueObj,
 } from "./types.js";
@@ -33,6 +34,12 @@ interface WasmSessionEncoder {
   reset(): void;
 }
 
+interface WasmSessionDecoder {
+  decodeToTransportJson(bytes: Uint8Array): string;
+  decodeToCompactJson(bytes: Uint8Array): string;
+  reset(): void;
+}
+
 interface WasmModule {
   default: (input?: WasmInput) => Promise<unknown>;
   encodeTransportJson(valueJson: string): Uint8Array;
@@ -56,6 +63,7 @@ interface WasmModule {
   encodeCompactJson(json: string): Uint8Array;
   encodeBatchCompactJson(json: string): Uint8Array;
   createSessionEncoder(optionsJson?: string): WasmSessionEncoder;
+  createSessionDecoder(optionsJson?: string): WasmSessionDecoder;
 }
 
 export async function loadWasmBackend(
@@ -93,6 +101,10 @@ export async function loadWasmBackend(
       const inner = wasm.createSessionEncoder(optionsJson);
       return wrapSessionEncoder(inner);
     },
+    createSessionDecoder: (optionsJson) => {
+      const inner = wasm.createSessionDecoder(optionsJson);
+      return wrapSessionDecoder(inner);
+    },
   };
 }
 
@@ -124,6 +136,14 @@ function wrapSessionEncoder(inner: WasmSessionEncoder): RuntimeSessionEncoder {
     encodePatchCompactJson: (json) => inner.encodePatchCompactJson(json),
     encodeMicroBatchCompactJson: (json) =>
       inner.encodeMicroBatchCompactJson(json),
+    reset: () => inner.reset(),
+  };
+}
+
+function wrapSessionDecoder(inner: WasmSessionDecoder): RuntimeSessionDecoder {
+  return {
+    decodeToTransportJson: (bytes) => inner.decodeToTransportJson(bytes),
+    decodeToCompactJson: (bytes) => inner.decodeToCompactJson(bytes),
     reset: () => inner.reset(),
   };
 }

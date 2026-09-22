@@ -1,8 +1,13 @@
 import { initBackend, requireBackend } from "./backend.js";
 import { rethrowDecodeError } from "./errors.js";
 import { encodeFast, tryDecodeFast } from "./fast-codec.js";
-import type { RuntimeKind, RuntimeSessionEncoder } from "./runtime/types.js";
+import type {
+  RuntimeKind,
+  RuntimeSessionDecoder,
+  RuntimeSessionEncoder,
+} from "./runtime/types.js";
 import {
+  deserializeCompact,
   serializeCompact,
   serializeCompactBatch,
   serializeSchema,
@@ -123,6 +128,35 @@ export class SessionEncoder {
     return this.#inner.encodeMicroBatchCompactJson(
       serializeCompactBatch(values)
     );
+  }
+
+  reset(): void {
+    this.#inner.reset();
+  }
+}
+
+export function createSessionDecoder(
+  options: SessionOptions = {}
+): SessionDecoder {
+  const raw = requireBackend().createSessionDecoder(
+    serializeSessionOptions(options)
+  );
+  return new SessionDecoder(raw);
+}
+
+export class SessionDecoder {
+  readonly #inner: RuntimeSessionDecoder;
+
+  constructor(inner: RuntimeSessionDecoder) {
+    this.#inner = inner;
+  }
+
+  decode(bytes: Uint8Array): TwilicValue {
+    try {
+      return deserializeCompact(this.#inner.decodeToCompactJson(bytes));
+    } catch (error) {
+      return rethrowDecodeError(error);
+    }
   }
 
   reset(): void {

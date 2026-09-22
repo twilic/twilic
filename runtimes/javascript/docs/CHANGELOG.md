@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-09-22
+
+### Added
+
+- Added `createSessionDecoder()` and `SessionDecoder` on `@twilic/core`, plus `AdvancedSessionDecoder` on `@twilic/core/advanced`.
+- Exposed the session decoder through `twilic-bridge`, N-API, and WASM.
+- `decode()` returns the application value for a full message and the reconstructed value for `STATE_PATCH`.
+- `reset()` clears decoder snapshots, templates, dictionaries, and previous-message state.
+
+### Changed
+
+- Map `encodePatch()` compares literal keys so a small object can emit `STATE_PATCH` when the patch is smaller than the previous full message.
+
 ## [3.1.0] - 2026-07-18
 
 ### Added

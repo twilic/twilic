@@ -33,6 +33,12 @@ export interface RuntimeSessionEncoder {
   reset(): void;
 }
 
+export interface RuntimeSessionDecoder {
+  decodeToTransportJson(bytes: Uint8Array): string;
+  decodeToCompactJson(bytes: Uint8Array): string;
+  reset(): void;
+}
+
 export interface RuntimeBackend {
   kind: RuntimeKind;
   encodeNative?: (value: unknown) => Uint8Array;
@@ -60,4 +66,5 @@ export interface RuntimeBackend {
   encodeBatchCompactJson(json: string): Uint8Array;
   encodeBatchNativeRaw?: (values: unknown) => Uint8Array;
   createSessionEncoder(optionsJson?: string): RuntimeSessionEncoder;
+  createSessionDecoder(optionsJson?: string): RuntimeSessionDecoder;
 }

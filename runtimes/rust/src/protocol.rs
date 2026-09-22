@@ -2260,17 +2260,46 @@ impl SessionEncoder {
         let Some(prev) = self.codec.state.previous_message.clone() else {
             return self.encode(value);
         };
+        // Build map patch candidates with literal keys so KeyRef::Id registration
+        // on the encoder does not block previous-message patch selection.
         let current_msg = match value {
-            Value::Map(entries) => self.codec.map_message(entries),
+            Value::Map(entries) => Message::Map(
+                entries
+                    .iter()
+                    .map(|(k, v)| MapEntry {
+                        key: KeyRef::Literal(k.clone()),
+                        value: v.clone(),
+                    })
+                    .collect(),
+            ),
             _ => self.codec.message_for_value(value),
         };
-        if !supports_state_patch(&prev, &current_msg) {
-            let bytes = self.codec.encode_value(value)?;
-            self.record_full_message_as_base();
-            return Ok(bytes);
+        let prev_for_patch = match &prev {
+            Message::Map(entries) => Message::Map(
+                entries
+                    .iter()
+                    .map(|entry| MapEntry {
+                        key: KeyRef::Literal(match &entry.key {
+                            KeyRef::Literal(v) => v.clone(),
+                            KeyRef::Id(id) => self
+                                .codec
+                                .state
+                                .key_table
+                                .get_value(*id)
+                                .unwrap_or("")
+                                .to_string(),
+                        }),
+                        value: entry.value.clone(),
+                    })
+                    .collect(),
+            ),
+            other => other.clone(),
+        };
+        if !supports_state_patch(&prev_for_patch, &current_msg) {
+            return self.encode_full_for_patch_fallback(value, &current_msg);
         }
-        let (ops, changed) = diff_message(&prev, &current_msg);
-        let total_fields = message_fields(&prev)
+        let (ops, changed) = diff_message(&prev_for_patch, &current_msg);
+        let total_fields = message_fields(&prev_for_patch)
             .len()
             .max(message_fields(&current_msg).len())
             .max(1);
@@ -2278,10 +2307,15 @@ impl SessionEncoder {
             .codec
             .state
             .previous_message_size
-            .unwrap_or_else(|| encoded_size(&prev));
+            .unwrap_or_else(|| encoded_size(&prev_for_patch));
         let patch_size = estimated_patch_size_with_base(BaseRef::Previous, &ops);
         let patch_ratio = changed as f64 / total_fields as f64;
-        if patch_ratio <= 0.10 && patch_size < prev_size {
+        // SPEC Rule ST1 strongly recommends ratio <= 0.10. For compact objects
+        // (few fields), also accept a single-field-class change when the patch
+        // is still smaller than the previous full message.
+        let ratio_ok = patch_ratio <= 0.10
+            || (total_fields <= 8 && changed * 2 <= total_fields && patch_ratio <= 0.34);
+        if ratio_ok && patch_size < prev_size {
             let patch = Message::StatePatch {
                 base_ref: BaseRef::Previous,
                 operations: ops,
@@ -2293,7 +2327,25 @@ impl SessionEncoder {
             return Ok(bytes);
         }
 
-        let bytes = self.codec.encode_value(value)?;
+        self.encode_full_for_patch_fallback(value, &current_msg)
+    }
+
+    fn encode_full_for_patch_fallback(
+        &mut self,
+        value: &Value,
+        current_msg: &Message,
+    ) -> Result<Vec<u8>> {
+        // Prefer a self-describing Map over session-local ShapedObject so a peer
+        // decoder without the encoder's shape table can still reconstruct values.
+        let bytes = match current_msg {
+            Message::Map(_) => {
+                let bytes = self.codec.encode_message(current_msg)?;
+                self.codec.state.previous_message = Some(current_msg.clone());
+                self.codec.state.previous_message_size = Some(bytes.len());
+                bytes
+            }
+            _ => self.codec.encode_value(value)?,
+        };
         self.record_full_message_as_base();
         Ok(bytes)
     }
@@ -2377,6 +2429,78 @@ impl SessionEncoder {
             }
         }
         self.codec.state.last_schema_id = Some(schema.schema_id);
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct SessionDecoder {
+    codec: TwilicCodec,
+}
+
+impl SessionDecoder {
+    pub fn new(options: SessionOptions) -> Self {
+        Self {
+            codec: TwilicCodec::with_options(options),
+        }
+    }
+
+    pub fn decode(&mut self, bytes: &[u8]) -> Result<Value> {
+        let message = self.codec.decode_message(bytes)?;
+        match message {
+            Message::Control(_) | Message::ControlStream { .. } => Err(TwilicError::InvalidData(
+                "control message is not an application value",
+            )),
+            Message::StatePatch { .. } => {
+                let reconstructed =
+                    self.codec
+                        .state
+                        .previous_message
+                        .clone()
+                        .ok_or(TwilicError::InvalidData(
+                            "state patch missing reconstructed message",
+                        ))?;
+                self.message_to_application_value(reconstructed)
+            }
+            Message::BaseSnapshot { payload, .. } => self.message_to_application_value(*payload),
+            other => self.message_to_application_value(other),
+        }
+    }
+
+    pub fn reset(&mut self) {
+        self.codec.state.reset_state();
+    }
+
+    pub fn decode_message(&mut self, bytes: &[u8]) -> Result<Message> {
+        self.codec.decode_message(bytes)
+    }
+
+    fn message_to_application_value(&self, message: Message) -> Result<Value> {
+        match message {
+            Message::Scalar(value) => Ok(value),
+            Message::Array(values) => Ok(Value::Array(values)),
+            Message::Map(entries) => Ok(Value::Map(entries_to_map(entries, &self.codec.state)?)),
+            Message::ShapedObject {
+                shape_id,
+                presence,
+                values,
+            } => {
+                let keys = self.codec.state.shape_table.get_keys(shape_id).ok_or(
+                    match self.codec.state.options.unknown_reference_policy {
+                        UnknownReferencePolicy::FailFast => {
+                            TwilicError::UnknownReference("shape_id", shape_id)
+                        }
+                        UnknownReferencePolicy::StatelessRetry => {
+                            TwilicError::StatelessRetryRequired("shape_id", shape_id)
+                        }
+                    },
+                )?;
+                Ok(Value::Map(shape_values_to_map(keys, presence, values)))
+            }
+            Message::TypedVector(vec) => Ok(typed_vector_to_value(vec)),
+            _ => Err(TwilicError::InvalidData(
+                "session decode expects scalar/array/map/vector message",
+            )),
+        }
     }
 }
 

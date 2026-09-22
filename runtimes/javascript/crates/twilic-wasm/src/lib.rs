@@ -4,7 +4,7 @@ use twilic_bridge::{
     encode_batch_direct_from_json, encode_batch_transport_json,
     encode_batch_with_schema_transport_json, encode_bound_stream_transport_json,
     encode_compact_json, encode_direct_from_json, encode_transport_json,
-    encode_with_schema_transport_json, BridgeSessionEncoder,
+    encode_with_schema_transport_json, BridgeSessionDecoder, BridgeSessionEncoder,
 };
 use wasm_bindgen::prelude::*;
 
@@ -235,4 +235,42 @@ impl SessionEncoder {
 #[wasm_bindgen(js_name = createSessionEncoder)]
 pub fn create_session_encoder(options_json: Option<String>) -> Result<SessionEncoder, JsValue> {
     SessionEncoder::new(options_json)
+}
+
+#[wasm_bindgen]
+pub struct SessionDecoder {
+    inner: BridgeSessionDecoder,
+}
+
+#[wasm_bindgen]
+impl SessionDecoder {
+    #[wasm_bindgen(constructor)]
+    pub fn new(options_json: Option<String>) -> Result<SessionDecoder, JsValue> {
+        let inner = BridgeSessionDecoder::new(options_json.as_deref()).map_err(into_js_error)?;
+        Ok(Self { inner })
+    }
+
+    #[wasm_bindgen(js_name = decodeToTransportJson)]
+    pub fn decode_to_transport_json(&mut self, bytes: &[u8]) -> Result<String, JsValue> {
+        self.inner
+            .decode_to_transport_json(bytes)
+            .map_err(into_js_error)
+    }
+
+    #[wasm_bindgen(js_name = decodeToCompactJson)]
+    pub fn decode_to_compact_json(&mut self, bytes: &[u8]) -> Result<String, JsValue> {
+        self.inner
+            .decode_to_compact_json(bytes)
+            .map_err(into_js_error)
+    }
+
+    #[wasm_bindgen]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[wasm_bindgen(js_name = createSessionDecoder)]
+pub fn create_session_decoder(options_json: Option<String>) -> Result<SessionDecoder, JsValue> {
+    SessionDecoder::new(options_json)
 }

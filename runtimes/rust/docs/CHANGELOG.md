@@ -6,8 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-09-22
+
+### Added
+
+- Added `SessionDecoder` and `create_session_decoder()`. `decode()` returns the application value for a full message and the reconstructed value for `STATE_PATCH`. `reset()` clears decoder snapshots, templates, dictionaries, and previous-message state. A failed decode does not partially advance that state.
+
 ### Changed
 
+- Map `encode_patch()` compares literal keys so a small object can emit `STATE_PATCH` when the patch is smaller than the previous full message. A full-message fallback updates the previous-message baseline.
 - Avoid temporary integer vectors in direct, delta, FOR, delta-FOR, and delta-of-delta bitpack encoding. Compute block width with a bitwise OR reduction while preserving encoded bytes and decoder behavior.
 
 ### Fixed

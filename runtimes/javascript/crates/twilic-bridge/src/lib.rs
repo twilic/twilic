@@ -6,9 +6,9 @@ use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::value::RawValue;
 use twilic::model::SchemaField;
 use twilic::{
-    create_session_encoder, decode, encode, encode_batch, encode_batch_with_schema,
-    encode_bound_stream, encode_with_schema, Schema, SessionEncoder, SessionOptions, TwilicError,
-    UnknownReferencePolicy, Value,
+    create_session_decoder, create_session_encoder, decode, encode, encode_batch,
+    encode_batch_with_schema, encode_bound_stream, encode_with_schema, Schema, SessionDecoder,
+    SessionEncoder, SessionOptions, TwilicError, UnknownReferencePolicy, Value,
 };
 
 // ── SIMD-JSON helpers ───────────────────────────────────────────────────────
@@ -293,6 +293,36 @@ impl BridgeSessionEncoder {
             .map(transport_to_value)
             .collect::<Result<Vec<_>>>()?;
         self.inner.encode_micro_batch(&values).map_err(Into::into)
+    }
+
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+pub struct BridgeSessionDecoder {
+    inner: SessionDecoder,
+}
+
+impl BridgeSessionDecoder {
+    pub fn new(options_json: Option<&str>) -> Result<Self> {
+        let options = parse_session_options_json(options_json)?;
+        Ok(Self {
+            inner: create_session_decoder(options),
+        })
+    }
+
+    pub fn decode_to_transport_json(&mut self, bytes: &[u8]) -> Result<String> {
+        let value = self.inner.decode(bytes).map_err(BridgeError::from)?;
+        let transport = value_to_transport(value);
+        serde_json::to_string(&transport).map_err(Into::into)
+    }
+
+    pub fn decode_to_compact_json(&mut self, bytes: &[u8]) -> Result<String> {
+        let value = self.inner.decode(bytes).map_err(BridgeError::from)?;
+        let mut out = String::with_capacity(256);
+        value_to_compact_json_str(&value, &mut out);
+        Ok(out)
     }
 
     pub fn reset(&mut self) {

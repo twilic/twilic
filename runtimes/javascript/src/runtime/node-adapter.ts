@@ -1,5 +1,6 @@
 import type {
   RuntimeBackend,
+  RuntimeSessionDecoder,
   RuntimeSessionEncoder,
   TransportValueObj,
 } from "./types.js";
@@ -32,6 +33,12 @@ export interface NativeSessionEncoder {
   reset(): void;
 }
 
+export interface NativeSessionDecoder {
+  decodeToTransportJson(bytes: Uint8Array): string;
+  decodeToCompactJson(bytes: Uint8Array): string;
+  reset(): void;
+}
+
 export interface NativeModule {
   encodeNative(value: unknown): Uint8Array;
   decodeNative(bytes: Uint8Array): unknown;
@@ -58,6 +65,7 @@ export interface NativeModule {
   encodeBatchCompactJson(json: string): Uint8Array;
   encodeBatchNativeRaw(values: unknown): Uint8Array;
   createSessionEncoder(optionsJson?: string): NativeSessionEncoder;
+  createSessionDecoder(optionsJson?: string): NativeSessionDecoder;
 }
 
 export function createNodeRuntimeBackend(native: NativeModule): RuntimeBackend {
@@ -93,6 +101,10 @@ export function createNodeRuntimeBackend(native: NativeModule): RuntimeBackend {
     createSessionEncoder: (optionsJson) => {
       const inner = native.createSessionEncoder(optionsJson);
       return wrapSessionEncoder(inner);
+    },
+    createSessionDecoder: (optionsJson) => {
+      const inner = native.createSessionDecoder(optionsJson);
+      return wrapSessionDecoder(inner);
     },
   };
 }
@@ -132,6 +144,16 @@ function wrapSessionEncoder(
       asUint8Array(inner.encodePatchCompactJson(json)),
     encodeMicroBatchCompactJson: (json) =>
       asUint8Array(inner.encodeMicroBatchCompactJson(json)),
+    reset: () => inner.reset(),
+  };
+}
+
+function wrapSessionDecoder(
+  inner: NativeSessionDecoder
+): RuntimeSessionDecoder {
+  return {
+    decodeToTransportJson: (bytes) => inner.decodeToTransportJson(bytes),
+    decodeToCompactJson: (bytes) => inner.decodeToCompactJson(bytes),
     reset: () => inner.reset(),
   };
 }

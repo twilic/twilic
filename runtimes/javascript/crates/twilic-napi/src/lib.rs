@@ -11,7 +11,8 @@ use twilic_bridge::{
     encode_batch_direct_from_json, encode_batch_native_raw, encode_batch_transport_json,
     encode_batch_with_schema_transport_json, encode_bound_stream_transport_json,
     encode_compact_json, encode_direct_from_json, encode_transport_json,
-    encode_with_schema_transport_json, BridgeError, BridgeSessionEncoder, TransportValue,
+    encode_with_schema_transport_json, BridgeError, BridgeSessionDecoder, BridgeSessionEncoder,
+    TransportValue,
 };
 use twilic_core::{
     decode as decode_value,
@@ -1902,4 +1903,42 @@ impl SessionEncoder {
 #[napi(js_name = "createSessionEncoder")]
 pub fn create_session_encoder(options_json: Option<String>) -> napi::Result<SessionEncoder> {
     SessionEncoder::new(options_json)
+}
+
+#[napi]
+pub struct SessionDecoder {
+    inner: BridgeSessionDecoder,
+}
+
+#[napi]
+impl SessionDecoder {
+    #[napi(constructor)]
+    pub fn new(options_json: Option<String>) -> napi::Result<Self> {
+        let inner = BridgeSessionDecoder::new(options_json.as_deref()).map_err(to_napi_error)?;
+        Ok(Self { inner })
+    }
+
+    #[napi(js_name = "decodeToTransportJson")]
+    pub fn decode_to_transport_json(&mut self, bytes: Buffer) -> napi::Result<String> {
+        self.inner
+            .decode_to_transport_json(bytes.as_ref())
+            .map_err(to_napi_error)
+    }
+
+    #[napi(js_name = "decodeToCompactJson")]
+    pub fn decode_to_compact_json(&mut self, bytes: Buffer) -> napi::Result<String> {
+        self.inner
+            .decode_to_compact_json(bytes.as_ref())
+            .map_err(to_napi_error)
+    }
+
+    #[napi]
+    pub fn reset(&mut self) {
+        self.inner.reset();
+    }
+}
+
+#[napi(js_name = "createSessionDecoder")]
+pub fn create_session_decoder(options_json: Option<String>) -> napi::Result<SessionDecoder> {
+    SessionDecoder::new(options_json)
 }
