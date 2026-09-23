@@ -7,7 +7,8 @@ HEAD_SHA="${2:-HEAD}"
 runtime_os() {
   case "$1" in
     swift) printf 'macos-latest\n' ;;
-    *) printf 'ubuntu-latest\n' ;;
+    # ubuntu-latest moves to Ubuntu 26 on 2026-10-19.
+    *) printf 'ubuntu-24.04\n' ;;
   esac
 }
 

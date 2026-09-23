@@ -15,12 +15,12 @@ concurrency:
 jobs:
   changes:
     name: Select runtimes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.select.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -33,14 +33,14 @@ jobs:
 
   docs:
     name: Documentation checks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Setup Bun
@@ -64,7 +64,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 
@@ -74,13 +74,20 @@ jobs:
 
       - name: Setup wasm-pack
         if: matrix.runtime == 'javascript'
-        uses: jetli/wasm-pack-action@v0.4.0
-        with:
-          version: v0.13.0
+        run: |
+          version="0.13.0"
+          archive="wasm-pack-v${version}-x86_64-unknown-linux-musl.tar.gz"
+          curl --fail --silent --show-error --location \
+            "https://github.com/rustwasm/wasm-pack/releases/download/v${version}/${archive}" \
+            --output "${archive}"
+          tar -xzf "${archive}"
+          sudo install -m 0755 "wasm-pack-v${version}-x86_64-unknown-linux-musl/wasm-pack" /usr/local/bin/wasm-pack
+          rm -rf "${archive}" "wasm-pack-v${version}-x86_64-unknown-linux-musl"
+          wasm-pack --version
 
       - name: Setup Node.js
         if: matrix.runtime == 'javascript'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
 
@@ -97,13 +104,14 @@ jobs:
 
       - name: Setup Go
         if: matrix.runtime == 'go'
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: "1.22.x"
+          cache: false
 
       - name: Setup uv and Python
         if: matrix.runtime == 'python'
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
 
@@ -116,7 +124,7 @@ jobs:
 
       - name: Setup JVM
         if: matrix.runtime == 'java' || matrix.runtime == 'kotlin' || matrix.runtime == 'scala'
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "21"
@@ -128,7 +136,7 @@ jobs:
 
       - name: Setup .NET
         if: matrix.runtime == 'csharp'
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 8.0.x
 
@@ -143,17 +151,31 @@ jobs:
 
       - name: Setup Lua
         if: matrix.runtime == 'lua'
-        uses: leafo/gh-actions-lua@v10
-        with:
-          luaVersion: "5.4"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential libreadline-dev libncurses-dev ca-certificates curl
+          curl --fail --silent --show-error --location --output lua.tar.gz https://www.lua.org/ftp/lua-5.4.8.tar.gz
+          tar -xzf lua.tar.gz
+          make -C lua-5.4.8 -j"$(nproc)" linux
+          sudo make -C lua-5.4.8 INSTALL_TOP=/usr/local install
+          rm -rf lua.tar.gz lua-5.4.8
 
       - name: Setup LuaRocks
         if: matrix.runtime == 'lua'
-        uses: leafo/gh-actions-luarocks@v4
+        run: |
+          curl --fail --silent --show-error --location --output luarocks.tar.gz https://luarocks.org/releases/luarocks-3.8.0.tar.gz
+          tar -xzf luarocks.tar.gz
+          (
+            cd luarocks-3.8.0
+            ./configure --with-lua=/usr/local
+            make
+            sudo make install
+          )
+          rm -rf luarocks.tar.gz luarocks-3.8.0
 
       - name: Install Busted
         if: matrix.runtime == 'lua'
-        run: luarocks install busted
+        run: sudo luarocks install busted
 
       - name: Setup PHP
         if: matrix.runtime == 'php'
@@ -196,7 +218,7 @@ jobs:
 
       - name: Setup Zig
         if: matrix.runtime == 'zig'
-        uses: mlugg/setup-zig@v2
+        uses: step-security/setup-zig@v2
         with:
           version: 0.15.2
 
