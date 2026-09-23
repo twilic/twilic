@@ -85,7 +85,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Map decoders reject attacker-controlled keys (`__proto__`, `constructor`, `prototype`) to prevent prototype pollution; the N-API decoder skips unsafe keys before `napi_set_property` / `napi_set_named_property`.
 - Published npm package now ships platform-specific native addons for Linux, macOS, and Windows instead of a single Linux binary loaded on all platforms.
 - CI workflow (`ci.yml`): added a `git clone` step to check out `twilic-rust` alongside `twilic-js` before the Rust build, fixing the `failed to read twilic-rust/Cargo.toml` error that caused all CI jobs to fail.
-- CI: pinned `wasm-pack` to v0.13.0 so the `--no-opt` flag used by `pnpm build:wasm` remains accepted.
+- CI: pinned `wasm-pack` to v0.13.0 so the `--no-opt` flag used by `bun run build:wasm` remains accepted.
 - CI: benchmark checkout uses the `benchmark` repository instead of `twilic-bench`.
 - `encodeBatchNativeRaw` no longer panics when the JS array contains `BigInt` values; the function now uses `JsUnknown` with raw NAPI traversal instead of `serde_json::Value`.
 - `publish-npm.yml`: clone `twilic-rust` before N-API and WASM builds so release workflows resolve the path dependency on the Rust crate.

@@ -23,10 +23,10 @@ go test ./...
 Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as [twilic/twilic](https://github.com/twilic/twilic)):
 
 ```bash
-pnpm install
-pnpm format        # write
-pnpm format:check  # CI check
-pnpm lint          # markdownlint
+bun install
+bun run format        # write
+bun run format:check  # CI check
+bun run lint          # markdownlint
 ```
 
 Interop scripts under `scripts/` use the sibling `../rust` runtime in this monorepo. They verify Rust and Go decode the same logical values and that `go test ./internal/core -run '^TestInteropFixtures_'` passes (encode/decode roundtrip, wire parity, and cross-language value checks).
@@ -44,7 +44,7 @@ Examples:
 
 - Tests added or updated for behavior changes
 - `gofmt`, `go vet ./...`, and `go test ./...` pass locally
-- `pnpm format:check` and `pnpm lint` pass when Markdown changes
+- `bun run format:check` and `bun run lint` pass when Markdown changes
 - Interop fixtures updated when wire behavior changes
 - Commit messages follow Conventional Commits
 

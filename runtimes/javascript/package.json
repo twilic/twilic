@@ -46,7 +46,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "pnpm build:napi && pnpm build:wasm && pnpm build:ts",
+    "build": "bun run build:napi && bun run build:wasm && bun run build:ts",
     "build:ts": "tsc -p tsconfig.json",
     "build:napi": "cargo build --locked --manifest-path Cargo.toml -p twilic-napi --release && node ./scripts/copy-napi.mjs",
     "build:wasm": "wasm-pack build crates/twilic-wasm --target bundler --out-dir ../../wasm/pkg --out-name twilic_wasm --no-opt -- --locked && rm -f wasm/pkg/.gitignore",
@@ -57,10 +57,10 @@
     "lint:fix": "oxlint --fix src scripts tests",
     "typecheck": "tsc --noEmit",
     "test:rust": "cargo test --locked --manifest-path Cargo.toml -p twilic-bridge",
-    "test:node": "pnpm build:napi && pnpm build:ts && node --test --test-concurrency=1 \"tests/**/*.test.mjs\"",
+    "test:node": "bun run build:napi && bun run build:ts && node --test --test-concurrency=1 \"tests/**/*.test.mjs\"",
     "test:node:ci": "node --test --test-concurrency=1 \"tests/**/*.test.mjs\"",
-    "test": "pnpm test:rust && pnpm test:node",
-    "prepack": "pnpm build",
+    "test": "bun run test:rust && bun run test:node",
+    "prepack": "bun run build",
     "release:check": "node ./scripts/verify-tag-version.mjs",
     "clean": "rimraf dist native wasm target",
     "prepare": "husky"
@@ -79,5 +79,5 @@
   "engines": {
     "node": ">=24"
   },
-  "packageManager": "pnpm@11.25.0"
+  "packageManager": "bun@1.4.2"
 }

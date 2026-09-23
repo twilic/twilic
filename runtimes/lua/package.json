@@ -1,7 +1,7 @@
 {
   "name": "twilic-lua",
   "private": true,
-  "packageManager": "pnpm@11.25.0",
+  "packageManager": "bun@1.4.2",
   "scripts": {
     "format": "prettier --write \"{README.md,docs/**/*.md,.github/**/*.md}\"",
     "format:check": "prettier --check \"{README.md,docs/**/*.md,.github/**/*.md}\"",

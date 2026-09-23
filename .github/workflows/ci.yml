@@ -43,16 +43,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 10.33.2
+          bun-version: 1.4.2
       - name: Install documentation tooling
-        run: pnpm install --frozen-lockfile
+        run: bun ci
       - name: Prettier check
-        run: pnpm format:check
+        run: bun run format:check
       - name: Markdown lint
-        run: pnpm lint
+        run: bun run lint
 
   runtime:
     name: Runtime - ${{ matrix.runtime }}
@@ -84,17 +84,16 @@ jobs:
         with:
           node-version: 24
 
-      - name: Setup pnpm
+      - name: Setup Bun
         if: matrix.runtime == 'javascript'
-        uses: pnpm/action-setup@v4
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 11.25.0
-          package_json_file: runtimes/javascript/package.json
+          bun-version: 1.4.2
 
       - name: Install JavaScript dependencies
         if: matrix.runtime == 'javascript'
         working-directory: runtimes/javascript
-        run: pnpm install --frozen-lockfile
+        run: bun ci
 
       - name: Setup Go
         if: matrix.runtime == 'go'

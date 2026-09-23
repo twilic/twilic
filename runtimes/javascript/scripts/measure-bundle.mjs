@@ -7,7 +7,7 @@
 // The report includes per-directory totals (dist, native, wasm/pkg),
 // per-file sizes, and a `npm pack --dry-run --json --ignore-scripts` snapshot
 // so the resulting tarball size can be compared between branches. Lifecycle
-// scripts are skipped because CI already runs `pnpm build` and prepack output
+// scripts are skipped because CI already runs `bun run build` and prepack output
 // would otherwise pollute stdout and break JSON parsing.
 
 import { spawnSync } from "node:child_process";

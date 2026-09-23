@@ -17,10 +17,10 @@ composer install && composer test
 Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as the repository root):
 
 ```bash
-pnpm install
-pnpm format        # write
-pnpm format:check  # CI check
-pnpm lint          # markdownlint
+bun install
+bun run format        # write
+bun run format:check  # CI check
+bun run lint          # markdownlint
 ```
 
 Interop scripts under `scripts/` use the sibling `../rust` runtime (or set `TWILIC_RUST_ROOT`). Run `bash scripts/check-interop.sh` for PHPUnit interop tests plus bidirectional Rust smoke checks.
@@ -38,7 +38,7 @@ Examples:
 
 - Tests added or updated for behavior changes
 - Language tests pass locally (see command above)
-- `pnpm format:check` and `pnpm lint` pass when Markdown changes
+- `bun run format:check` and `bun run lint` pass when Markdown changes
 - Commit messages follow Conventional Commits
 
 By contributing to this repository, you agree that your contribution may be distributed under the MIT license used by the project.

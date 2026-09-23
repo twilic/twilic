@@ -24,7 +24,7 @@ run_runtime() {
       cargo test --all-targets --manifest-path "${dir}/Cargo.toml"
       ;;
     javascript)
-      (cd "${dir}" && pnpm build:wasm && pnpm test)
+      (cd "${dir}" && bun run build:wasm && bun run test)
       ;;
     go)
       (cd "${dir}" && go test ./... -count=1)

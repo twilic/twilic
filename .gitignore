@@ -15,6 +15,5 @@ node_modules/
 **/.zig-cache/
 **/vendor
 **/vendor/
-**/.pnpm-store/
 **/native/*.node
 **/wasm/pkg/*.wasm

@@ -63,11 +63,10 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 11.25.0
-          package_json_file: runtimes/javascript/package.json
+          bun-version: 1.4.2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -75,10 +74,10 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun ci
 
       - name: Build N-API addon
-        run: pnpm build:napi
+        run: bun run build:napi
 
       - name: Upload native addon
         uses: actions/upload-artifact@v4
@@ -109,11 +108,10 @@ jobs:
         with:
           version: v0.13.0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 11.25.0
-          package_json_file: runtimes/javascript/package.json
+          bun-version: 1.4.2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -121,7 +119,7 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun ci
 
       - name: Verify tag and package version
         env:
@@ -130,8 +128,8 @@ jobs:
 
       - name: Build WASM and TypeScript
         run: |
-          pnpm build:wasm
-          pnpm build:ts
+          bun run build:wasm
+          bun run build:ts
 
       - name: Upload package sources
         uses: actions/upload-artifact@v4
@@ -183,11 +181,10 @@ jobs:
           find /tmp/twilic-native -type f -name 'twilic_napi-*.node' -exec cp -f {} native/ \;
           ls -la native
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 11.25.0
-          package_json_file: runtimes/javascript/package.json
+          bun-version: 1.4.2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -196,10 +193,10 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun ci
 
       - name: Verify pack contents
-        run: pnpm verify:pack
+        run: bun run verify:pack
 
       # Trusted publishing (OIDC): requires npm CLI >= 11.5.1.
       # Configure @twilic/core on npmjs.com: Settings → Trusted Publisher → GitHub Actions

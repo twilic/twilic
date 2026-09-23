@@ -25,10 +25,10 @@ uv run pytest
 Markdown in this repository is formatted with Prettier and linted with markdownlint (same tooling as the repository root):
 
 ```bash
-pnpm install
-pnpm format        # write
-pnpm format:check  # CI check
-pnpm lint          # markdownlint
+bun install
+bun run format        # write
+bun run format:check  # CI check
+bun run lint          # markdownlint
 ```
 
 Interop scripts under `scripts/` use the sibling `../rust` runtime in this monorepo. They verify Rust and Python decode the same logical values and that pytest interop tests pass.
@@ -46,7 +46,7 @@ Examples:
 
 - Tests added or updated for behavior changes
 - `uv run ruff format --check`, `uv run ruff check`, and `uv run pytest` pass locally
-- `pnpm format:check` and `pnpm lint` pass when Markdown changes
+- `bun run format:check` and `bun run lint` pass when Markdown changes
 - Interop fixtures updated when wire behavior changes
 - `docs/SPEC-TEST-TRACEABILITY.md` updated when spec coverage changes
 - Commit messages follow Conventional Commits

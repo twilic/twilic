@@ -18,8 +18,8 @@ This release line targets the Twilic v3 wire format (Dynamic Profile by default)
 ## Build
 
 ```bash
-pnpm install
-pnpm build
+bun install
+bun run build
 ```
 
 Build steps:
@@ -31,16 +31,16 @@ Build steps:
 ## Formatting and lint
 
 ```bash
-pnpm fmt
-pnpm fmt:check
-pnpm lint
-pnpm lint:fix
+bun run fmt
+bun run fmt:check
+bun run lint
+bun run lint:fix
 ```
 
 ## Test
 
 ```bash
-pnpm test
+bun run test
 ```
 
 What it validates:
@@ -149,8 +149,8 @@ The package is configured for npm publish and ships build artifacts from `dist/`
 Local dry run:
 
 ```bash
-pnpm build
-pnpm pack
+bun run build
+bun pm pack
 ```
 
 Release tags use `runtimes/javascript/vX.Y.Z` (see [`docs/releases.md`](../../docs/releases.md)):

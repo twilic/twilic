@@ -1,7 +1,7 @@
 {
   "name": "twilic",
   "private": true,
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "bun@1.4.2",
   "scripts": {
     "format": "prettier --write \"{README.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md,conformance/**/*.md,runtimes/README.md,runtimes/*/README.md,runtimes/*/docs/**/*.md,testdata/**/*.md}\"",
     "format:check": "prettier --check \"{README.md,CONTRIBUTING.md,SPEC.md,docs/**/*.md,examples/**/*.md,diagrams/**/*.md,versions/**/*.md,conformance/**/*.md,runtimes/README.md,runtimes/*/README.md,runtimes/*/docs/**/*.md,testdata/**/*.md}\"",

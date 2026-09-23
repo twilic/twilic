@@ -69,8 +69,8 @@ bash conformance/run.sh --interop all
 
 If you use the Node tooling in this repository:
 
-- run `pnpm format` before submitting Markdown changes
-- run `pnpm lint` before submitting Markdown changes
+- run `bun run format` before submitting Markdown changes
+- run `bun run lint` before submitting Markdown changes
 
 ## Commit Messages
 
@@ -93,7 +93,7 @@ Examples:
 - `docs: clarify v1 bound profile rules`
 - `fix(spec): correct scalar width table`
 
-After `pnpm install`, Husky runs Commitlint on each local commit. Pull requests are also checked in CI so every commit in the branch follows the same rules.
+After `bun install`, Husky runs Commitlint on each local commit. Pull requests are also checked in CI so every commit in the branch follows the same rules.
 
 ## Contribution Checklist
 
