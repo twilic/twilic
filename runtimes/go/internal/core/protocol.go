@@ -2278,13 +2278,16 @@ func (c *TwilicCodec) applyStatePatch(baseRef BaseRef, operations []PatchOperati
 	fields := messageFields(base)
 	for i := range operations {
 		op := operations[i]
-		idx := int(op.FieldID)
 		switch op.Opcode {
 		case PatchOpcodeKeep:
 		case PatchOpcodeReplaceScalar, PatchOpcodeReplaceVector, PatchOpcodeInsertField, PatchOpcodeStringRef, PatchOpcodePrefixDelta:
+			if op.FieldID > uint64(len(fields)) {
+				return Message{}, invalidData("patch field index out of range")
+			}
 			if op.Value == nil {
 				return Message{}, invalidData("patch operation missing value")
 			}
+			idx := int(op.FieldID)
 			if idx < len(fields) {
 				fields[idx] = op.Value.Clone()
 			} else if idx == len(fields) {
@@ -2293,29 +2296,32 @@ func (c *TwilicCodec) applyStatePatch(baseRef BaseRef, operations []PatchOperati
 				return Message{}, invalidData("patch field index out of range")
 			}
 		case PatchOpcodeDeleteField:
-			if idx < 0 || idx >= len(fields) {
+			if op.FieldID >= uint64(len(fields)) {
 				return Message{}, invalidData("delete field index out of range")
 			}
+			idx := int(op.FieldID)
 			fields = append(fields[:idx], fields[idx+1:]...)
 		case PatchOpcodeAppendVector:
-			if op.Value == nil || idx < 0 || idx >= len(fields) {
+			if op.Value == nil || op.FieldID >= uint64(len(fields)) {
 				return Message{}, invalidData("append vector patch invalid")
 			}
+			idx := int(op.FieldID)
 			if fields[idx].Kind != ValueArray || op.Value.Kind != ValueArray {
 				return Message{}, invalidData("append vector requires arrays")
 			}
 			fields[idx].Arr = append(fields[idx].Arr, op.Value.Arr...)
 		case PatchOpcodeTruncateVector:
-			if op.Value == nil || idx < 0 || idx >= len(fields) {
+			if op.Value == nil || op.FieldID >= uint64(len(fields)) {
 				return Message{}, invalidData("truncate vector patch invalid")
 			}
+			idx := int(op.FieldID)
 			if fields[idx].Kind != ValueArray || op.Value.Kind != ValueU64 {
 				return Message{}, invalidData("truncate vector requires array and u64")
 			}
-			n := int(op.Value.U64)
-			if n < 0 || n > len(fields[idx].Arr) {
+			if op.Value.U64 > uint64(len(fields[idx].Arr)) {
 				return Message{}, invalidData("truncate length")
 			}
+			n := int(op.Value.U64)
 			fields[idx].Arr = append([]Value(nil), fields[idx].Arr[:n]...)
 		}
 	}
