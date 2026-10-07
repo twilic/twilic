@@ -80,7 +80,7 @@ jobs:
         run: bun run build:napi
 
       - name: Upload native addon
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: native-${{ matrix.os }}
           path: runtimes/javascript/native/*.node
@@ -132,7 +132,7 @@ jobs:
           bun run build:ts
 
       - name: Upload package sources
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: js-package
           path: |
