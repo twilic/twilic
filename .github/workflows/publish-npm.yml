@@ -162,13 +162,13 @@ jobs:
           persist-credentials: false
 
       - name: Download package sources
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: js-package
           path: runtimes/javascript
 
       - name: Download native addons
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: native-*
           path: /tmp/twilic-native
