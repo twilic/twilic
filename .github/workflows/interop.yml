@@ -120,7 +120,7 @@ jobs:
 
       - name: Setup Lua
         if: matrix.runtime == 'lua'
-        uses: leafo/gh-actions-lua@v10
+        uses: leafo/gh-actions-lua@v13
         with:
           luaVersion: "5.4"
 
