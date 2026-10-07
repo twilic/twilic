@@ -85,17 +85,17 @@ class InternTable:
         self.by_id = []
 
 
-def shape_key(keys: list[str]) -> str:
-    return "\0".join(keys)
+def shape_key(keys: list[str]) -> tuple[str, ...]:
+    return tuple(keys)
 
 
 class ShapeTable:
     __slots__ = ("by_keys", "by_id", "observations", "next_id")
 
     def __init__(self) -> None:
-        self.by_keys: dict[str, int] = {}
+        self.by_keys: dict[tuple[str, ...], int] = {}
         self.by_id: dict[int, list[str]] = {}
-        self.observations: dict[str, int] = {}
+        self.observations: dict[tuple[str, ...], int] = {}
         self.next_id = 0
 
     def get_id(self, keys: list[str]) -> tuple[int, bool]:
@@ -156,7 +156,7 @@ class SessionState:
     key_table: InternTable = field(default_factory=InternTable)
     string_table: InternTable = field(default_factory=InternTable)
     shape_table: ShapeTable = field(default_factory=ShapeTable)
-    encode_shape_observations: dict[str, int] = field(default_factory=dict)
+    encode_shape_observations: dict[tuple[str, ...], int] = field(default_factory=dict)
     base_snapshots: list[_BaseSnapshotEntry] = field(default_factory=list)
     templates: dict[int, TemplateDescriptor] = field(default_factory=dict)
     template_columns: dict[int, list[Column]] = field(default_factory=dict)

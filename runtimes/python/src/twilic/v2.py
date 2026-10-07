@@ -65,7 +65,7 @@ class _V2EncodeState:
     def __init__(self) -> None:
         self.key_ids: dict[str, int] = {}
         self.str_ids: dict[str, int] = {}
-        self.shape_ids: dict[str, int] = {}
+        self.shape_ids: dict[tuple[str, ...], int] = {}
         self.next_key_id = 0
         self.next_str_id = 0
         self.next_shape_id = 0
