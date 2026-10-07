@@ -4,6 +4,8 @@ Lua 5.4 implementation of the Twilic wire format and session-aware encoder/decod
 
 This module's default `Twilic.encode` / `Twilic.decode` API targets Twilic v2 (v3 support pending). Stateful protocol features use `new_twilic_codec()` and `new_session_encoder()`.
 
+The session codec uses exactly four little-endian payload bytes for the smallest-u64 size code `4`. Older Lua encoders wrote eight bytes for this code; those noncanonical Lua-only messages must be re-encoded before decoding with the corrected codec.
+
 ## Project layout
 
 ```text

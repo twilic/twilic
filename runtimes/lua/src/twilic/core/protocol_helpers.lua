@@ -877,7 +877,9 @@ function M.write_smallest_u64(value, out)
     byte_buffer.append(out, (value >> 8) & 0xFF)
   elseif value <= 0xFFFFFFFF then
     byte_buffer.append(out, 4)
-    wire.append_u64_le(out, value)
+    for shift = 0, 24, 8 do
+      byte_buffer.append(out, (value >> shift) & 0xFF)
+    end
   else
     byte_buffer.append(out, 8)
     wire.append_u64_le(out, value)
@@ -891,7 +893,13 @@ function M.read_smallest_u64(reader)
     local lo, hi = reader:read_u8(), reader:read_u8()
     return lo | (hi << 8)
   end
-  if size == 4 then return wire.read_u64_le(reader) & 0xFFFFFFFF end
+  if size == 4 then
+    local value = 0
+    for shift = 0, 24, 8 do
+      value = value | (reader:read_u8() << shift)
+    end
+    return value
+  end
   if size == 8 then return wire.read_u64_le(reader) end
   errors.raise(errors.invalid_data("invalid smallest u64 size"))
 end
