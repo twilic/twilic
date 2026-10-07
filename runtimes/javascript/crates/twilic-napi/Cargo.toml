@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 twilic-bridge = { path = "../twilic-bridge" }
 twilic-core = { package = "twilic", path = "../../../rust" }
-napi = { version = "2.16", default-features = false, features = [
+napi = { version = "3.11", default-features = false, features = [
   "napi8",
   "serde-json",
 ] }
