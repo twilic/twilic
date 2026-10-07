@@ -96,10 +96,43 @@ Use this format:
 
 Common types include `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`, and `chore`.
 
+### Runtime scopes
+
+When a commit targets a single language runtime, use a lowercase scope that readers will recognize at a glance. Use a widely known short form when one is already common (`js`, `cpp`); otherwise use the everyday language name (`rust`, `python`, `kotlin`). Avoid directory-only spellings when a clearer short form exists (`javascript`), and avoid cryptic file-extension style abbreviations (`rs`, `py`, `rb`, `kt`).
+
+| Scope    | Runtime directory     |
+| -------- | --------------------- |
+| `c`      | `runtimes/c`          |
+| `cpp`    | `runtimes/cpp`        |
+| `csharp` | `runtimes/csharp`     |
+| `dart`   | `runtimes/dart`       |
+| `elixir` | `runtimes/elixir`     |
+| `go`     | `runtimes/go`         |
+| `java`   | `runtimes/java`       |
+| `js`     | `runtimes/javascript` |
+| `kotlin` | `runtimes/kotlin`     |
+| `lua`    | `runtimes/lua`        |
+| `php`    | `runtimes/php`        |
+| `python` | `runtimes/python`     |
+| `r`      | `runtimes/r`          |
+| `ruby`   | `runtimes/ruby`       |
+| `rust`   | `runtimes/rust`       |
+| `scala`  | `runtimes/scala`      |
+| `swift`  | `runtimes/swift`      |
+| `zig`    | `runtimes/zig`        |
+
+Use a non-runtime scope such as `spec` or `deps` when the change is not limited to one runtime. Omit the scope when it does not add clarity.
+
+Issue templates, pull request checklists, and GitHub Release titles keep the full display names (`JavaScript`, `C++`, `C#`).
+
 Examples:
 
 - `docs: clarify v1 bound profile rules`
 - `fix(spec): correct scalar width table`
+- `fix(js): enable getrandom wasm_js for wasm builds`
+- `fix(rust): reject for and xor-float overflows`
+- `fix(go): reject oversized table reference ids`
+- `fix(cpp): reject for bitpack overflows`
 
 After `bun install`, Husky runs Commitlint on each local commit. Pull requests are also checked in CI so every commit in the branch follows the same rules.
 
