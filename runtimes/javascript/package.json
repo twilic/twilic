@@ -66,7 +66,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
+    "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^19.8.1",
     "@types/node": "^24.19.1",
     "husky": "^9.1.7",
