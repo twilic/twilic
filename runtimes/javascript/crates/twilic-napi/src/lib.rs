@@ -1531,8 +1531,8 @@ fn decode_v2_key_raw(
 
 #[napi(js_name = "decodeNative")]
 pub fn decode_native_napi(env: Env, bytes: &[u8]) -> napi::Result<JsUnknown> {
-    // Compact protocol messages start with 0x00/0x01/0x02; v2 bytes do not.
-    // Skip the compact-protocol attempt for v2 bytes to avoid wasted work.
+    // Retain the legacy mixed decoder for the raw encodeNative/decodeNative pair.
+    // Public Dynamic decoding uses decodeDynamicNative to avoid ambiguous fixints.
     let first = bytes.first().copied().unwrap_or(0xff);
     if first <= 0x02 {
         if let Some(value) = try_decode_native_root_message(&env, bytes)? {
@@ -1543,6 +1543,16 @@ pub fn decode_native_napi(env: Env, bytes: &[u8]) -> napi::Result<JsUnknown> {
     if let Some(raw) = try_decode_v2_native(&env, bytes)? {
         return Ok(js_unknown_from_raw_unchecked(&env, raw));
     }
+    let value = decode_value(bytes).map_err(|e| invalid_arg(&e.to_string()))?;
+    value_to_js_unknown(&env, value)
+}
+
+#[napi(js_name = "decodeDynamicNative")]
+pub fn decode_dynamic_native_napi(env: Env, bytes: &[u8]) -> napi::Result<JsUnknown> {
+    if let Some(raw) = try_decode_v2_native(&env, bytes)? {
+        return Ok(js_unknown_from_raw_unchecked(&env, raw));
+    }
+    // None can mean empty input or trailing bytes; never retry as a compact message.
     let value = decode_value(bytes).map_err(|e| invalid_arg(&e.to_string()))?;
     value_to_js_unknown(&env, value)
 }
