@@ -100,7 +100,7 @@ jobs:
 
       - name: Build and fuzz decode
         env:
-          ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
+          ASAN_OPTIONS: detect_leaks=0:halt_on_error=1:quarantine_size_mb=16
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: |
           set -euo pipefail
@@ -123,4 +123,5 @@ jobs:
           cmake --build "${build_dir}" --target decode_fuzzer --parallel "$(nproc)"
           mkdir -p "runtimes/${{ matrix.runtime }}/fuzz/corpus"
           cp -R "runtimes/${{ matrix.runtime }}/fuzz/seed_corpus/." "runtimes/${{ matrix.runtime }}/fuzz/corpus/"
-          "${build_dir}/decode_fuzzer" -max_total_time="${duration}" "runtimes/${{ matrix.runtime }}/fuzz/corpus"
+          "${build_dir}/decode_fuzzer" -max_total_time="${duration}" -rss_limit_mb=4096 \
+            "runtimes/${{ matrix.runtime }}/fuzz/corpus"
