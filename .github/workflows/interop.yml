@@ -126,7 +126,7 @@ jobs:
 
       - name: Setup LuaRocks
         if: matrix.runtime == 'lua'
-        uses: leafo/gh-actions-luarocks@v4
+        uses: leafo/gh-actions-luarocks@v6
 
       - name: Install Busted
         if: matrix.runtime == 'lua'
