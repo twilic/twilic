@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-base64 = "0.22"
+base64 = "0.23"
 twilic = { path = "../../../rust" }
 itoa = "1.0"
 ryu = "1.0"
