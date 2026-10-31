@@ -3,3 +3,9 @@ name = "braces"
 ecosystem = "npm"
 ignore = true
 reason = "No patched release; transitive of micromatch in markdown tooling only."
+
+[[PackageOverrides]]
+name = "deepmerge"
+ecosystem = "npm"
+ignore = true
+reason = "No patched release; transitive of ultracite, a dev-time linter wrapper that is not shipped."
