@@ -225,7 +225,7 @@ Value new_array(std::vector<Value> items) {
   return v;
 }
 MapEntry entry(const std::string& key, Value value) {
-  return MapEntry{key, value.clone()};
+  return MapEntry{key, std::move(value)};
 }
 Value new_map(std::vector<MapEntry> entries) {
   Value v;
